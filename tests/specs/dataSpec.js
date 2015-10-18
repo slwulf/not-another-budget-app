@@ -2,6 +2,8 @@
  * Data Module Spec
  */
 
+describe('App#data', function() {
+
 /**
  * data.add()
  */
@@ -101,3 +103,5 @@ describe('data.get(id)', function() {
 /**
  * data.remove()
  */
+
+});

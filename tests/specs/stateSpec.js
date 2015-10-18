@@ -2,9 +2,18 @@
  * State Module Spec
  */
 
+describe('App#state', function() {
+
 /**
  * state.update(prop, obj)
  */
+
+describe('state.update(prop, obj)', function() {
+  it('should not allow to overwrite the update method', function() {
+    var update = state.update('update', undefined);
+    expect(update).to.equal(false);
+  });
+});
 
 /**
  * state.length()
@@ -33,3 +42,5 @@ describe('state.last()', function() {
 /**
  * state.list();
  */
+
+});
