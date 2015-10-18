@@ -7,7 +7,7 @@ var state = (function (){
 
   var updateState = function updateState(prop, obj) {
     // don't allow overwrite of this method
-    if (prop === 'update') return true;
+    if (prop === 'update') return false;
 
     // special update for transactions
     if (prop === 'transactions') {
@@ -24,7 +24,7 @@ var state = (function (){
       }
 
       // Otherwise, don't do anything.
-      return true;
+      return false;
     }
 
     // var keys = Object.keys(obj);
