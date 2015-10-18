@@ -1,10 +1,13 @@
 /**
- * Modules
+ *  Node Modules
  */
 
-// var assert = require('assert');
 var chai = require('chai');
 var expect = chai.expect;
+
+/**
+ * Overrides
+ */
 
 // Suppress quiet errors from app script
 console.warn = function() {

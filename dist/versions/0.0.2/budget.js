@@ -54,7 +54,17 @@
  * State
  */
 
-var state = {};
+var state = {
+
+  /**
+   * Checks if runtime is node.
+   * When true, all modules expose
+   * all available functions.
+   * @type {Boolean}
+   */
+  isTest: (typeof window === 'undefined')
+
+};
 
 /**
  * Transactions Module
@@ -248,14 +258,24 @@ var data = (function(app) {
    * Public Methods
    */
 
+   // Tests get all functions
+  if (app.isTest) {
+    return {
+      add: addTransaction,
+      get: getTransaction,
+      edit: editTransaction,
+      remove: deleteTransaction,
+      all: function all() {
+        return transactions;
+      },
+      length: function length() {
+        return transactions.length;
+      }
+    };
+  }
+
+  // App gets subset
   return {
-    add: addTransaction,
-    get: getTransaction,
-    edit: editTransaction,
-    remove: deleteTransaction,
-    all: function all() {
-      return transactions;
-    },
     length: function length() {
       return transactions.length;
     }
