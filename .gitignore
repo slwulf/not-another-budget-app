@@ -1,6 +1,5 @@
 # Build Process
 node_modules/
-package.json
 
 # Other
 *.sublime-*
