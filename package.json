@@ -4,11 +4,12 @@
   "description": "A JavaScript-based budget application.",
   "main": " ",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp test",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
-    "url": " "
+    "url": "https://github.com/austinwulf/not-another-budget-app"
   },
   "author": "Austin Wulf",
   "license": "ISC",
