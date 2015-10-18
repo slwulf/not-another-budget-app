@@ -30,7 +30,3 @@
 // - DOM manipulation
 
 (function() {
-
-var state = {
-  transactions: []
-};

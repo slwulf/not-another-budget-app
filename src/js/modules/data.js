@@ -3,7 +3,6 @@
  */
 
 var data = (function(app) {
-
   /**
    * Transaction model
    * @param {Number} id Unique identifier
@@ -35,14 +34,8 @@ var data = (function(app) {
     var amt = data.amount;
     var cat = data.category;
     var transaction;
-    var id;
-
-    // Get new ID
-    if (app.transactions.length) {
-      id = app.transactions[app.transactions.length].id + 1;
-    } else {
-      id = 1;
-    }
+    var last = app.last();
+    var id = last.id + 1;
 
     // Instantiate a new transaction.
     transaction = Transaction({
@@ -54,10 +47,12 @@ var data = (function(app) {
 
     // ID should always match
     if (id === transaction.id) {
-      app.transactions.push(transaction);
+      app.update('transactions', transaction);
     } else {
       console.warn('addTransaction: Could not create transaction with id', id);
     }
+
+    return transaction;
   };
 
   /**
@@ -69,13 +64,19 @@ var data = (function(app) {
   var getTransaction = function getTransaction(id) {
     var transaction;
 
+    // If no ID is passed, get most recent
+    if (!id) {
+      return app.last();
+    }
+
+    // return false if called w/ NaN or []
     if (isNaN(id) || typeof id !== 'number') {
       console.warn('getTransaction:', id, 'is not a number.');
       return false;
     }
 
     // Try to find the transaction.
-    transaction = app.transactions.filter(function(tran) {
+    transaction = app.list().filter(function(tran) {
       return tran.id === id;
     });
 
