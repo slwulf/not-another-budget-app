@@ -4,7 +4,7 @@
   "description": "A JavaScript-based budget application.",
   "main": " ",
   "scripts": {
-    "test": "gulp test",
+    "test": "gulp test-spec",
     "build": "gulp build"
   },
   "repository": {
