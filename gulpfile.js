@@ -136,7 +136,7 @@ gulp.task('test', function(){
     .pipe(gulp.dest(project.paths.tests))
     .pipe(mocha({
       ui: 'bdd', // mochajs.org/#bdd
-      reporter: 'spec'
+      reporter: 'nyan'
     }));
 });
 
