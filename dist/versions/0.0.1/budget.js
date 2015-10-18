@@ -91,9 +91,10 @@ var data = (function(app) {
     if (id === transaction.id) {
       transactions.push(transaction);
     } else {
-      console.warn('addTransaction: Could not create transaction with id', id);
+      console.warn('Could not create transaction with id', id);
     }
 
+    events.trigger('addTransaction', transaction);
     return transaction;
   };
 
@@ -107,14 +108,14 @@ var data = (function(app) {
     var get;
 
     // If no ID is passed, get most recent
-    if (!id) {
+    if (id === undefined) {
       return transactions[transactions.length - 1];
     }
 
-    // return false if called w/ NaN or []
+    // return undefined if called w/ NaN or []
     if (isNaN(id) || typeof id !== 'number') {
-      console.warn('getTransaction:', id, 'is not a number.');
-      return false;
+      console.warn(id, 'is not a number.');
+      return undefined;
     }
 
     // Try to find the transaction.
@@ -124,8 +125,8 @@ var data = (function(app) {
 
     if (!get[0]) {
       // No transaction found.
-      console.log('getTransaction: No transaction found for id', id);
-      return false;
+      console.warn('No transaction found for id', id);
+      return undefined;
     }
 
     // Return as many transactions as are found
@@ -144,7 +145,7 @@ var data = (function(app) {
     var transaction;
 
     if (isNaN(id) || typeof id !== 'number') {
-      console.warn('editTransaction:', id, 'is not a number.');
+      console.warn(id, 'is not a number.');
       return false;
     }
 
@@ -159,6 +160,7 @@ var data = (function(app) {
     if (n.amount) transaction.amount = n.amount;
     if (n.category) transaction.category = n.category;
 
+    events.trigger('editTransaction', transaction);
     return transaction;
   };
 
@@ -169,10 +171,11 @@ var data = (function(app) {
 
   var deleteTransaction = function deleteTransaction(id) {
     var index;
+    var transaction;
 
     if (isNaN(id) || typeof id !== 'number') {
-      console.warn('deleteTransaction:', id, 'is not a number.');
-      return false;
+      console.warn(id, 'is not a number.');
+      return undefined;
     }
 
     // First, get the transaction's index
@@ -180,8 +183,15 @@ var data = (function(app) {
       return e.id;
     }).indexOf(id);
 
+    if (index < 0) {
+      console.warn('No transaction found for id', id);
+      return undefined;
+    }
+
     // Return the deleted element
-    return transactions.splice(index, 1)[0];
+    transaction = transactions.splice(index, 1)[0];
+    events.trigger('deleteTransaction', transaction);
+    return transaction;
   };
 
   /**
@@ -199,6 +209,72 @@ var data = (function(app) {
     length: function length() {
       return transactions.length;
     }
+  };
+
+})(state);
+
+/**
+ * Events Module
+ */
+
+var events = (function(app) {
+  /**
+   * Events Object
+   */
+
+  var events = {};
+
+  /**
+   * Adds a new event listener
+   * @param {String} eventName The name of the event
+   * @param {Function} fn The event callback to add
+   */
+
+  var addEventListener = function addEventListener(eventName, fn) {
+    events[eventName] = events[eventName] || [];
+    events[eventName].push(fn);
+  };
+
+  /**
+   * Removes an event listener
+   * @param {String} eventName The name of the event
+   * @param {Function} fn The event callback to remove
+   */
+
+  var removeEventListener = function removeEventListener(eventName, fn) {
+    var i;
+    if (events[eventName]) {
+      for (i = 0; i < events[eventName].length; i++) {
+        if (events[eventName][i] === fn) {
+          events[eventName].splice(i, 1);
+          break;
+        }
+      }
+    }
+  };
+
+  /**
+   * Triggers an event
+   * @param {String} eventName The event to be triggered
+   * @param {Object} data A data payload to pass to listeners
+   */
+
+  var triggerEvent = function triggerEvent(eventName, data) {
+    if (events[eventName]) {
+      events[eventName].forEach(function(fn) {
+        fn(data);
+      });
+    }
+  };
+
+   /**
+    * Public Methods
+    */
+
+  return {
+    on: addEventListener,
+    off: removeEventListener,
+    trigger: triggerEvent
   };
 
 })(state);

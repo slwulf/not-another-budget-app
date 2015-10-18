@@ -24,7 +24,7 @@ var source = {
     project.paths.src.js + '_header.js',
     project.paths.src.modules + 'state.js',
     project.paths.src.modules + 'data.js',
-    // project.paths.src.modules + 'events.js',
+    project.paths.src.modules + 'events.js',
     // project.paths.src.modules + 'listeners.js',
     // ??? project.paths.src.modules + 'handlers.js',
     project.paths.src.js + '_footer.js'
