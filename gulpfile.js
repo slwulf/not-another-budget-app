@@ -1,14 +1,3 @@
-/**
- * Registria Gulp Boilerplate
- *
- * Use this when starting a new project.
- * Don't forget to rename the project in
- * your pacakage.json!
- *
- * Set the variables below to customize
- * the setup for your project.
- */
-
 // Config
 var project = {
   name: 'budget',
@@ -16,14 +5,16 @@ var project = {
   paths: {
     src: {
       js: 'src/js/',
-      css: 'src/css/'
+      css: 'src/css/',
+      modules: 'src/js/modules/'
     },
     dist: {
       js: 'dist/',
       css: 'dist/',
       versions: 'dist/versions/'
     },
-    lib: 'lib/'
+    lib: 'lib/',
+    tests: 'tests/'
   }
 };
 
@@ -31,7 +22,8 @@ var source = {
   // Include your scripts in order
   js: [
     project.paths.src.js + '_header.js',
-    project.paths.src.js + 'modules/*',
+    project.paths.src.modules + 'state.js',
+    project.paths.src.modules + 'data.js',
     project.paths.src.js + '_footer.js'
   ],
 
@@ -39,6 +31,14 @@ var source = {
   // Ex: mySass: project.paths.src + 'css/mySass.scss'
   css: [
     project.paths.src.css + 'budget.scss'
+  ],
+
+  // Compile tests for mocha
+  tests: [
+    project.paths.src.modules + 'state.js',
+    project.paths.src.modules + 'data.js',
+    project.paths.tests + 'init.js',
+    project.paths.tests + 'specs/*.js'
   ]
 };
 
@@ -56,7 +56,8 @@ var
   sass = require('gulp-sass'),
   prefix = require('gulp-autoprefixer'),
   cssmin = require('gulp-cssmin'),
-  run = require('run-sequence');
+  run = require('run-sequence'),
+  mocha = require('gulp-mocha');
   // run is for sync tasks that
   // will execute in a specific order:
     // gulp.task('whatevs', function() {
@@ -122,7 +123,21 @@ gulp.task('cssRelease', function(){
     .pipe(rename({
       extname: '.min.css'
     }))
-    .pipe(gulp.dest(project.paths.dist.css))
+    .pipe(gulp.dest(project.paths.dist.css));
+});
+
+/**
+ * Tests
+ */
+
+gulp.task('test', function(){
+  return gulp.src(source.tests)
+    .pipe(concat(project.name + '-tests.js'))
+    .pipe(gulp.dest(project.paths.tests))
+    .pipe(mocha({
+      ui: 'bdd', // mochajs.org/#bdd
+      reporter: 'spec'
+    }));
 });
 
 /**
@@ -135,7 +150,7 @@ gulp.task('release', function(){
   run(
     'build',
     'lint',
-    // TODO: should be a "tests" line here
+    'test',
     ['jsRelease', 'cssRelease']
   );
 });
@@ -143,6 +158,7 @@ gulp.task('release', function(){
 gulp.task('watch', function(){
     gulp.watch(source.js, ['js']);
     gulp.watch(project.paths.src + '**/*.scss', ['css']);
+    gulp.watch(project.paths.tests + 'specs/*.js', ['test']);
     // gulp.watch('README.md', 'release');
 });
 

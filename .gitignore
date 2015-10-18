@@ -5,3 +5,4 @@ package.json
 # Other
 *.sublime-*
 lib/
+budget-tests.js
