@@ -96,8 +96,125 @@ describe('data.get(id)', function() {
  * data.edit()
  */
 
+describe('data.edit(id, n)', function() {
+  var id;
+  var get;
+
+  // Get a transaction to edit
+  before('init', function() {
+    id = data.add({
+      description: 'toilet paper',
+      amount: 3.89,
+      category: 'Groceries'
+    }).id;
+  });
+
+  // test editing
+  it('should be able to edit description', function(){
+    data.edit(id, {
+      description: 'paper towels'
+    });
+
+    get = data.get(id);
+    expect(get.description).to.equal('paper towels');
+    expect(get.amount).to.equal(3.89);
+    expect(get.category).to.equal('Groceries');
+  });
+
+  it('should be able to edit amount', function() {
+    data.edit(id, {
+      amount: 2.47
+    });
+
+    get = data.get(id);
+    expect(get.description).to.equal('paper towels');
+    expect(get.amount).to.equal(2.47);
+    expect(get.category).to.equal('Groceries');
+  });
+
+  it('should be able to edit category', function() {
+    data.edit(id, {
+      category: 'Shopping'
+    });
+
+    get = data.get(id);
+    expect(get.description).to.equal('paper towels');
+    expect(get.amount).to.equal(2.47);
+    expect(get.category).to.equal('Shopping');
+  });
+});
+
 /**
  * data.remove()
  */
+
+describe('data.remove(id)', function() {
+  var length = data.length();
+  var id;
+  var get;
+  var r;
+
+  // init transaction
+  before('init', function() {
+    id = data.add({
+      description: 'inhaler',
+      amount: 34.89,
+      category: 'Medical'
+    }).id;
+  });
+
+  // test delete function
+  it('should delete the correct transaction', function() {
+    r = data.remove(id);
+    get = data.get(r.id);
+
+    expect(get).to.not.exist;
+    id = data.add(r).id;
+    expect(data.get(id).amount).to.equal(34.89);
+  });
+
+  // test error
+  it('should return undefined if no transaction found', function() {
+    r = data.remove(300);
+
+    expect(r).to.not.exist;
+  });
+});
+
+/**
+ * data.all()
+ */
+
+describe('data.all()', function() {
+  var all = data.all();
+
+  it('should return an array', function() {
+    expect(all).to.be.an.array;
+  });
+
+  it('should have length data.length()', function() {
+    expect(all.length).to.equal(data.length());
+  });
+});
+
+/**
+ * data.length()
+ */
+
+describe('data.length()', function() {
+  var length;
+
+  before('init', function() {
+    length = data.length();
+  });
+
+  it('should be a number', function() {
+    expect(length).to.be.a.number;
+  });
+
+  it('should be equal to data.all().length', function() {
+    expect(length).to.equal(data.all().length);
+  });
+});
 
 });
