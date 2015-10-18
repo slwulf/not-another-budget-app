@@ -22,4 +22,4 @@ Ahh, something we'll be seeing a lot of in the commit logs.
 
 For right now, I'm not really trying to maintain a bunch of documentation about this app. The above should suffice at documentation at this point, since at the time of this writing, the app is a data model and an events hub with test specs.
 
-I will however be writing commentary in doc blocks as I code out more functionality. Feel free to follow and keep track of the [latest dist compile](../blob/master/dist/version/0.0.2/budget.js) if that kind of shit interests you.
+I will however be writing commentary in doc blocks as I code out more functionality. Feel free to follow and keep track of the [latest dist compile](../blob/master/dist/versions/0.0.2/budget.js) if that kind of shit interests you.
