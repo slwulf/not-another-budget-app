@@ -50,16 +50,6 @@ var source = {
   }
 };
 
-// Add Mocha tests
-// source.tests = source.js
-//   .filter(function(str) {
-//     return str.indexOf('_') === -1;
-//   })
-//   .concat([
-//     project.paths.tests + 'init.js',
-//     project.paths.tests + 'specs/*.js'
-//   ]);
-
 /**
  * Black box stuff ahead...
  */
@@ -178,15 +168,14 @@ gulp.task('build', function(){
 
 gulp.task('release', function(){
   run(
-    'build',
-    'lint',
+    ['js', 'css'],
     'test-spec',
     ['jsRelease', 'cssRelease']
   );
 });
 
 gulp.task('watch', function(){
-    gulp.watch(source.js, ['js']);
+    gulp.watch(source.js, ['test', 'js']);
     gulp.watch(project.paths.src + '**/*.scss', ['css']);
     gulp.watch(project.paths.tests + 'specs/*.js', ['test']);
     // gulp.watch('README.md', 'release');
