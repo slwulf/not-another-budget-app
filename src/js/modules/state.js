@@ -5,6 +5,7 @@
 var state = (function (){
   var transactions = [];
 
+  // TODO: This feels like a wrong thing...
   var updateState = function updateState(prop, obj) {
     // don't allow overwrite of this method
     if (prop === 'update') return false;
