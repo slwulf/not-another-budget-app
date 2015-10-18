@@ -130,6 +130,8 @@ gulp.task('cssRelease', function(){
  * Tests
  */
 
+// Nyancat reporter! Less output, used
+// for dev builds
 gulp.task('test', function(){
   return gulp.src(source.tests)
     .pipe(concat(project.name + '-tests.js'))
@@ -140,17 +142,35 @@ gulp.task('test', function(){
     }));
 });
 
+// Full test report. Verbose, used
+// for release builds
+gulp.task('test-spec', function(){
+  return gulp.src(source.tests)
+    .pipe(concat(project.name + '-tests.js'))
+    .pipe(gulp.dest(project.paths.tests))
+    .pipe(mocha({
+      ui: 'bdd', // mochajs.org/#bdd
+      reporter: 'spec'
+    }));
+});
+
 /**
  * Build Tasks
  */
 
-gulp.task('build', ['js', 'css']);
+gulp.task('build', function(){
+  run(
+    'lint',
+    'test',
+    ['js', 'css']
+  );
+});
 
 gulp.task('release', function(){
   run(
     'build',
     'lint',
-    'test',
+    'test-spec',
     ['jsRelease', 'cssRelease']
   );
 });
