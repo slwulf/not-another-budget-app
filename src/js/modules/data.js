@@ -33,9 +33,9 @@ var data = (function(app) {
     var desc = data.description;
     var amt = data.amount;
     var cat = data.category;
-    var transaction;
     var last = app.last();
     var id = last.id + 1;
+    var transaction;
 
     // Instantiate a new transaction.
     transaction = Transaction({
@@ -98,18 +98,21 @@ var data = (function(app) {
    */
 
   var editTransaction = function editTransaction(id, n) {
+    var index;
+    var transaction;
+
     if (isNaN(id) || typeof id !== 'number') {
       console.warn('editTransaction:', id, 'is not a number.');
       return false;
     }
 
     // First, get the transaction's index
-    var index = state.transactions.map(function(e) {
+    index = app.transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Next, get a reference and alter it
-    var transaction = state.transactions[index];
+    transaction = app.transactions[index];
     if (n.description) transaction.description = n.description;
     if (n.amount) transaction.amount = n.amount;
     if (n.category) transaction.category = n.category;
@@ -123,18 +126,20 @@ var data = (function(app) {
    */
 
   var deleteTransaction = function deleteTransaction(id) {
+    var index;
+
     if (isNaN(id) || typeof id !== 'number') {
       console.warn('deleteTransaction:', id, 'is not a number.');
       return false;
     }
 
     // First, get the transaction's index
-    var index = state.transactions.map(function(e) {
+    index = app.transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Return the deleted element
-    return state.transactions.splice(index, 1)[0];
+    return app.transactions.splice(index, 1)[0];
   };
 
   /**

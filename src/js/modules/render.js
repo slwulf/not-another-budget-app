@@ -11,7 +11,9 @@
   Mark each template with a class `template` and a
   unique `id`. These will be copied and removed from
   the DOM at runtime. In CSS, the `template` class
-  should be set to `display: none`.
+  should be set to `display: none`. In JS, use the
+  Element#getElementsByClassName method.
+  (JSPerf: https://jsperf.com/getelementsbyclassname-vs-queryselectorall/25)
 
   DOM templates should be exactly what you want the
   script to reproduce. The `template` class will be

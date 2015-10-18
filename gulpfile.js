@@ -19,28 +19,46 @@ var project = {
 };
 
 var source = {
-  // Include your scripts in order
+  // Module build order
   js: [
     project.paths.src.js + '_header.js',
     project.paths.src.modules + 'state.js',
     project.paths.src.modules + 'data.js',
+    // project.paths.src.modules + 'events.js',
+    // project.paths.src.modules + 'listeners.js',
+    // ??? project.paths.src.modules + 'handlers.js',
     project.paths.src.js + '_footer.js'
   ],
 
-  // Give each master Sass file a name
-  // Ex: mySass: project.paths.src + 'css/mySass.scss'
+  // I'm not actually sure if this will concat
+  // with multiple stylesheets...
   css: [
     project.paths.src.css + 'budget.scss'
   ],
 
-  // Compile tests for mocha
-  tests: [
-    project.paths.src.modules + 'state.js',
-    project.paths.src.modules + 'data.js',
-    project.paths.tests + 'init.js',
-    project.paths.tests + 'specs/*.js'
-  ]
+  // Build Mocha tests from source.js
+  tests: function tests() {
+    return this.js.filter(function(str) {
+      // filter out non-modules
+      return str.indexOf(project.paths.src.modules) > -1;
+    })
+    .concat([
+      // add Mocha tests
+      project.paths.tests + 'init.js',
+      project.paths.tests + 'specs/*.js'
+    ]);
+  }
 };
+
+// Add Mocha tests
+// source.tests = source.js
+//   .filter(function(str) {
+//     return str.indexOf('_') === -1;
+//   })
+//   .concat([
+//     project.paths.tests + 'init.js',
+//     project.paths.tests + 'specs/*.js'
+//   ]);
 
 /**
  * Black box stuff ahead...
@@ -58,14 +76,6 @@ var
   cssmin = require('gulp-cssmin'),
   run = require('run-sequence'),
   mocha = require('gulp-mocha');
-  // run is for sync tasks that
-  // will execute in a specific order:
-    // gulp.task('whatevs', function() {
-    //    run(
-    //      'myTask',
-    //      'myOtherTask'
-    //    );
-    // });
 
 /**
  * JavaScript Tasks
@@ -133,7 +143,7 @@ gulp.task('cssRelease', function(){
 // Nyancat reporter! Less output, used
 // for dev builds
 gulp.task('test', function(){
-  return gulp.src(source.tests)
+  return gulp.src(source.tests())
     .pipe(concat(project.name + '-tests.js'))
     .pipe(gulp.dest(project.paths.tests))
     .pipe(mocha({
@@ -145,7 +155,7 @@ gulp.task('test', function(){
 // Full test report. Verbose, used
 // for release builds
 gulp.task('test-spec', function(){
-  return gulp.src(source.tests)
+  return gulp.src(source.tests())
     .pipe(concat(project.name + '-tests.js'))
     .pipe(gulp.dest(project.paths.tests))
     .pipe(mocha({
