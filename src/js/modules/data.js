@@ -62,7 +62,7 @@ var data = (function(app) {
    */
 
   var getTransaction = function getTransaction(id) {
-    var transaction;
+    var get;
 
     // If no ID is passed, get most recent
     if (!id) {
@@ -76,17 +76,18 @@ var data = (function(app) {
     }
 
     // Try to find the transaction.
-    transaction = app.list().filter(function(tran) {
+    get = app.list().filter(function(tran) {
       return tran.id === id;
     });
 
-    // If we find any transactions, return them.
-    if (transaction.length > 1) return transaction;
-    return transaction[0];
+    if (!get[0]) {
+      // No transaction found.
+      console.log('getTransaction: No transaction found for id', id);
+      return false;
+    }
 
-    // Otherwise, let the developer know.
-    console.log('getTransaction: No transaction found for id', id);
-    return false;
+    // Return as many transactions as are found
+    return (get.length > 1) ? get : get[0];
   };
 
   /**
