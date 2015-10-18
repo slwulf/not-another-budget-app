@@ -40,7 +40,7 @@ describe('.add()', function() {
 
     expect(last.description).to.equal(tran.description);
     expect(last.amount).to.equal(tran.amount);
-    expect(last.category).to.equal(tran.category)
+    expect(last.category).to.equal(tran.category);
   });
 
   // test id incrementer

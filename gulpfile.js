@@ -72,9 +72,13 @@ var
  */
 
 gulp.task('lint', function(){
-  return gulp.src(project.paths.dist.versions +
-                  project.version + '/' +
-                  project.name + '.js')
+  return gulp.src([
+    project.paths.dist.versions +
+    project.version + '/' +
+    project.name + '.js',
+
+    project.paths.tests + 'specs/*.js'
+  ])
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });

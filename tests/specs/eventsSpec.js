@@ -7,7 +7,7 @@ describe('App#events', function() {
   var testEvent = 0;
   var testHandler = function testHandler(data) {
     testEvent = data;
-  }
+  };
   var testPayload;
 
   // test triggering
