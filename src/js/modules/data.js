@@ -4,6 +4,12 @@
 
 var data = (function(app) {
   /**
+   * Transactions list
+   */
+
+  var transactions = [];
+
+  /**
    * Transaction model
    * @param {Number} id Unique identifier
    * @param {String} description A short description or name
@@ -33,12 +39,9 @@ var data = (function(app) {
     var desc = data.description;
     var amt = data.amount;
     var cat = data.category;
-    var last = app.last();
-    var id = last.id + 1;
-    var transaction;
-
-    // Instantiate a new transaction.
-    transaction = Transaction({
+    var last = transactions[transactions.length - 1];
+    var id = (last) ? last.id + 1 : 1;
+    var transaction = Transaction({
       id: id,
       description: desc,
       amount: amt,
@@ -47,7 +50,7 @@ var data = (function(app) {
 
     // ID should always match
     if (id === transaction.id) {
-      app.update('transactions', transaction);
+      transactions.push(transaction);
     } else {
       console.warn('addTransaction: Could not create transaction with id', id);
     }
@@ -66,7 +69,7 @@ var data = (function(app) {
 
     // If no ID is passed, get most recent
     if (!id) {
-      return app.last();
+      return transactions[transactions.length - 1];
     }
 
     // return false if called w/ NaN or []
@@ -76,7 +79,7 @@ var data = (function(app) {
     }
 
     // Try to find the transaction.
-    get = app.list().filter(function(tran) {
+    get = transactions.filter(function(tran) {
       return tran.id === id;
     });
 
@@ -107,12 +110,12 @@ var data = (function(app) {
     }
 
     // First, get the transaction's index
-    index = app.transactions.map(function(e) {
+    index = transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Next, get a reference and alter it
-    transaction = app.transactions[index];
+    transaction = transactions[index];
     if (n.description) transaction.description = n.description;
     if (n.amount) transaction.amount = n.amount;
     if (n.category) transaction.category = n.category;
@@ -134,12 +137,12 @@ var data = (function(app) {
     }
 
     // First, get the transaction's index
-    index = app.transactions.map(function(e) {
+    index = transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Return the deleted element
-    return app.transactions.splice(index, 1)[0];
+    return transactions.splice(index, 1)[0];
   };
 
   /**
@@ -150,7 +153,13 @@ var data = (function(app) {
     add: addTransaction,
     get: getTransaction,
     edit: editTransaction,
-    remove: deleteTransaction
+    remove: deleteTransaction,
+    all: function all() {
+      return transactions;
+    },
+    length: function length() {
+      return transactions.length;
+    }
   };
 
 })(state);

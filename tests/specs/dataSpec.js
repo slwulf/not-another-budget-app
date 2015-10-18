@@ -31,12 +31,12 @@ describe('data.add()', function() {
   });
 
   // test state object
-  it('should update the global state object', function() {
+  it('should update the list of transactions', function() {
     // add to list
     var r = data.add(tran);
 
     // get state list
-    var last = state.last();
+    var last = data.get();
 
     expect(last.description).to.equal(tran.description);
     expect(last.amount).to.equal(tran.amount);
@@ -46,13 +46,13 @@ describe('data.add()', function() {
   // test id incrementer
   it('should correctly autoincrement the id', function() {
     // get current last id
-    var lastId = state.last().id;
+    var lastId = data.get().id;
 
     // add to list
     var r = data.add(tran);
 
     // get new last id
-    var newLast = state.last().id;
+    var newLast = data.get().id;
 
     expect(lastId).to.equal(newLast - 1);
   });
@@ -72,17 +72,13 @@ describe('data.get(id)', function() {
 
   // test lookup by id
   it('should return the correct transaction', function() {
-    var bagel = state.list().filter(function(tran) {
+    var bagel = data.all().filter(function(tran) {
       return tran.description === 'bagels';
     })[0];
 
-    var creamCheese = state.list().filter(function(tran) {
+    var creamCheese = data.all().filter(function(tran) {
       return tran.description === 'cream cheese';
     })[0];
-
-    // console.log('bagel.id:', bagel.id);
-    // console.log('creamCheese.id:', creamCheese.id);
-    // console.log('data.get(bagelId):',data.get(bagelId));
 
     expect(data.get(bagel.id).description).to.equal('bagels');
     expect(data.get(creamCheese.id).description).to.equal('cream cheese');

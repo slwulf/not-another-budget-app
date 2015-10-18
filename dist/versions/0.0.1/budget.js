@@ -35,57 +35,19 @@
  * State
  */
 
-var state = (function (){
-  var transactions = [];
-
-  // TODO: This feels like a wrong thing...
-  var updateState = function updateState(prop, obj) {
-    // don't allow overwrite of this method
-    if (prop === 'update') return false;
-
-    // special update for transactions
-    if (prop === 'transactions') {
-      // If obj is array, concat list
-      if (Array.isArray(obj)) {
-        // Make sure it's an array of transactions
-        if (!obj[0].hasOwnProperty('id')) return true;
-        transactions = transactions.concat(obj);
-      }
-
-      // If it's a transaction obj, push
-      if (obj.hasOwnProperty('id')) {
-        transactions.push(obj);
-      }
-
-      // Otherwise, don't do anything.
-      return false;
-    }
-
-    // var keys = Object.keys(obj);
-    // keys.some(function(key) {
-    //   this[key] = obj[key];
-    // });
-  };
-
-  return {
-    update: updateState,
-    length: function length() {
-      return transactions.length;
-    },
-    last: function last() {
-      return transactions[transactions.length-1] || { id: 0 };
-    },
-    list: function list() {
-      return transactions;
-    }
-  };
-})();
+var state = {};
 
 /**
  * Data Module
  */
 
 var data = (function(app) {
+  /**
+   * Transactions list
+   */
+
+  var transactions = [];
+
   /**
    * Transaction model
    * @param {Number} id Unique identifier
@@ -116,12 +78,9 @@ var data = (function(app) {
     var desc = data.description;
     var amt = data.amount;
     var cat = data.category;
-    var transaction;
-    var last = app.last();
-    var id = last.id + 1;
-
-    // Instantiate a new transaction.
-    transaction = Transaction({
+    var last = transactions[transactions.length - 1];
+    var id = (last) ? last.id + 1 : 1;
+    var transaction = Transaction({
       id: id,
       description: desc,
       amount: amt,
@@ -130,7 +89,7 @@ var data = (function(app) {
 
     // ID should always match
     if (id === transaction.id) {
-      app.update('transactions', transaction);
+      transactions.push(transaction);
     } else {
       console.warn('addTransaction: Could not create transaction with id', id);
     }
@@ -149,7 +108,7 @@ var data = (function(app) {
 
     // If no ID is passed, get most recent
     if (!id) {
-      return app.last();
+      return transactions[transactions.length - 1];
     }
 
     // return false if called w/ NaN or []
@@ -159,7 +118,7 @@ var data = (function(app) {
     }
 
     // Try to find the transaction.
-    get = app.list().filter(function(tran) {
+    get = transactions.filter(function(tran) {
       return tran.id === id;
     });
 
@@ -181,18 +140,21 @@ var data = (function(app) {
    */
 
   var editTransaction = function editTransaction(id, n) {
+    var index;
+    var transaction;
+
     if (isNaN(id) || typeof id !== 'number') {
       console.warn('editTransaction:', id, 'is not a number.');
       return false;
     }
 
     // First, get the transaction's index
-    var index = state.transactions.map(function(e) {
+    index = transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Next, get a reference and alter it
-    var transaction = state.transactions[index];
+    transaction = transactions[index];
     if (n.description) transaction.description = n.description;
     if (n.amount) transaction.amount = n.amount;
     if (n.category) transaction.category = n.category;
@@ -206,18 +168,20 @@ var data = (function(app) {
    */
 
   var deleteTransaction = function deleteTransaction(id) {
+    var index;
+
     if (isNaN(id) || typeof id !== 'number') {
       console.warn('deleteTransaction:', id, 'is not a number.');
       return false;
     }
 
     // First, get the transaction's index
-    var index = state.transactions.map(function(e) {
+    index = transactions.map(function(e) {
       return e.id;
     }).indexOf(id);
 
     // Return the deleted element
-    return state.transactions.splice(index, 1)[0];
+    return transactions.splice(index, 1)[0];
   };
 
   /**
@@ -228,7 +192,13 @@ var data = (function(app) {
     add: addTransaction,
     get: getTransaction,
     edit: editTransaction,
-    remove: deleteTransaction
+    remove: deleteTransaction,
+    all: function all() {
+      return transactions;
+    },
+    length: function length() {
+      return transactions.length;
+    }
   };
 
 })(state);
