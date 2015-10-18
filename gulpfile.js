@@ -1,7 +1,7 @@
 // Config
 var project = {
   name: 'budget',
-  version: '0.0.1',
+  version: '0.0.2',
   paths: {
     src: {
       js: 'src/js/',

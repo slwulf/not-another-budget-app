@@ -1,33 +1,54 @@
 /*
- * Budget
- * v 0.0.1
+ * Not Another Budget App
+ * v 0.0.2
  *
- * This is a budget tracking app. It
- * can do the following things:
+ * What the hell am I doing...?
  *
- *   - Create, delete, edit, and list
- *     transaction data
- *   - Display various (customizable?)
- *     reports about transactions
- *   - Set and keep track of a budget
- *     with customizable categories
- *   - Sync data to a database (Node endpoint)
- *   - Load historical data from database (Node endpoint)
+ *   = MODULES =
  *
- * It will use event-based architecture
- * for rendering data in the DOM to allow
- * live-updating lists and reports.
+ *   - Transactions -
+ *   Keeps track of and categorizes expenses
+ *   RAGE API (remove, add, get, edit) (rage > crud)
+ *     (to be refactored -> events w/ no API)
+ *
+ *   - Events -
+ *   Global (to the app) events API
+ *     .on(event, fn) Set event listener
+ *     .off(event, fn) Remove event listener
+ *     .trigger(event, data) Deliver data to listeners
+ *
+ *   - Render -
+ *   DOM API... more details in render.js
+ *
+ * Transactions is the base data module.
+ * Other data types will be built similarly:
+ *   First, declare a model factory and a data set.
+ *   Second, create stateless private functions to
+ *     operate on the data. Data in, data out.
+ *   Finally, expose an API and attach events.
+ *   Write tests in conjunction.
  */
 
 // Modules
 //
+// Events (done! except putting events everywhere)
+//
 // Data/Model
-// - What is a transaction?
-// - Transaction CRUD
+// - Transactions (done!)
+// - Budgets: tracks budget by category
+//            sets category amts to set or %
+// - Income: tracks income (uses transactions
+//           with no category or income category)
+// - Reports: calculates various stats based on
+//              other modules
 //
 // Rendering/View
 // - Template creation
 // - DOM manipulation
+//
+// Routes
+// - oh god am i really gonna do routes
+// - yeah i guess i have to
 
 (function() {
 
@@ -38,7 +59,21 @@
 var state = {};
 
 /**
- * Data Module
+ * Transactions Module
+ *
+ * Author's note: I got so tired of the
+ *   word "transaction" by the end of
+ *   writing this module that I wanted
+ *   to rename the module something sane
+ *   and simple like "purchases" or
+ *   "expenses". But by that point, I
+ *   was in too deep.
+ *
+ *   That's why this module will remain
+ *   the data module until I refactor
+ *   and can rename it something sane. Probably
+ *   around the time I write the next data
+ *   modules, which describe budgets & income.
  */
 
 var data = (function(app) {
@@ -53,7 +88,8 @@ var data = (function(app) {
    * @param {Number} id Unique identifier
    * @param {String} description A short description or name
    * @param {Number} amount Amount of the transaction
-   * @param {String} category Groups the transaction
+   * @param {String} category Meta data
+   * @param {Object} date Current date in ms
    * @return {Object} model A new Transaction object.
    */
 
@@ -192,6 +228,18 @@ var data = (function(app) {
     transaction = transactions.splice(index, 1)[0];
     events.trigger('deleteTransaction', transaction);
     return transaction;
+  };
+
+  /**
+   * Returns the total spent for all transactions
+   * or a given category
+   * @param {String} category A category of transactions (optional)
+   */
+
+  var getTotal = function getTotal(category) {
+    return transactions.reduce(function(amt, t){
+      return amt += t.amount;
+    }, 0);
   };
 
   /**

@@ -8,7 +8,7 @@ describe('App#data', function() {
  * data.add()
  */
 
-describe('data.add()', function() {
+describe('.add()', function() {
   var tran;
 
   // init a dummy transaction
@@ -62,7 +62,7 @@ describe('data.add()', function() {
  * data.get()
  */
 
-describe('data.get(id)', function() {
+describe('.get(id)', function() {
   // add some transactions
   before('init', function() {
     data.add({ description: 'bagels', amount: 1.99, category: 'Groceries' });
@@ -96,7 +96,7 @@ describe('data.get(id)', function() {
  * data.edit()
  */
 
-describe('data.edit(id, n)', function() {
+describe('.edit(id, n)', function() {
   var id;
   var get;
 
@@ -148,7 +148,7 @@ describe('data.edit(id, n)', function() {
  * data.remove()
  */
 
-describe('data.remove(id)', function() {
+describe('.remove(id)', function() {
   var length = data.length();
   var id;
   var get;
@@ -185,7 +185,7 @@ describe('data.remove(id)', function() {
  * data.all()
  */
 
-describe('data.all()', function() {
+describe('.all()', function() {
   var all = data.all();
 
   it('should return an array', function() {
@@ -201,7 +201,7 @@ describe('data.all()', function() {
  * data.length()
  */
 
-describe('data.length()', function() {
+describe('.length()', function() {
   var length;
 
   before('init', function() {

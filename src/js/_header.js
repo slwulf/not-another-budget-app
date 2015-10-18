@@ -1,32 +1,53 @@
 /*
- * Budget
- * v 0.0.1
+ * Not Another Budget App
+ * v 0.0.2
  *
- * This is a budget tracking app. It
- * can do the following things:
+ * What the hell am I doing...?
  *
- *   - Create, delete, edit, and list
- *     transaction data
- *   - Display various (customizable?)
- *     reports about transactions
- *   - Set and keep track of a budget
- *     with customizable categories
- *   - Sync data to a database (Node endpoint)
- *   - Load historical data from database (Node endpoint)
+ *   = MODULES =
  *
- * It will use event-based architecture
- * for rendering data in the DOM to allow
- * live-updating lists and reports.
+ *   - Transactions -
+ *   Keeps track of and categorizes expenses
+ *   RAGE API (remove, add, get, edit) (rage > crud)
+ *     (to be refactored -> events w/ no API)
+ *
+ *   - Events -
+ *   Global (to the app) events API
+ *     .on(event, fn) Set event listener
+ *     .off(event, fn) Remove event listener
+ *     .trigger(event, data) Deliver data to listeners
+ *
+ *   - Render -
+ *   DOM API... more details in render.js
+ *
+ * Transactions is the base data module.
+ * Other data types will be built similarly:
+ *   First, declare a model factory and a data set.
+ *   Second, create stateless private functions to
+ *     operate on the data. Data in, data out.
+ *   Finally, expose an API and attach events.
+ *   Write tests in conjunction.
  */
 
 // Modules
 //
+// Events (done! except putting events everywhere)
+//
 // Data/Model
-// - What is a transaction?
-// - Transaction CRUD
+// - Transactions (done!)
+// - Budgets: tracks budget by category
+//            sets category amts to set or %
+// - Income: tracks income (uses transactions
+//           with no category or income category)
+// - Reports: calculates various stats based on
+//              other modules
 //
 // Rendering/View
 // - Template creation
 // - DOM manipulation
+//
+// Routes
+// - oh god am i really gonna do routes
+// - yeah i guess i have to
 
 (function() {

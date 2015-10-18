@@ -1,5 +1,19 @@
 /**
- * Data Module
+ * Transactions Module
+ *
+ * Author's note: I got so tired of the
+ *   word "transaction" by the end of
+ *   writing this module that I wanted
+ *   to rename the module something sane
+ *   and simple like "purchases" or
+ *   "expenses". But by that point, I
+ *   was in too deep.
+ *
+ *   That's why this module will remain
+ *   the data module until I refactor
+ *   and can rename it something sane. Probably
+ *   around the time I write the next data
+ *   modules, which describe budgets & income.
  */
 
 var data = (function(app) {
@@ -14,7 +28,8 @@ var data = (function(app) {
    * @param {Number} id Unique identifier
    * @param {String} description A short description or name
    * @param {Number} amount Amount of the transaction
-   * @param {String} category Groups the transaction
+   * @param {String} category Meta data
+   * @param {Object} date Current date in ms
    * @return {Object} model A new Transaction object.
    */
 
@@ -153,6 +168,18 @@ var data = (function(app) {
     transaction = transactions.splice(index, 1)[0];
     events.trigger('deleteTransaction', transaction);
     return transaction;
+  };
+
+  /**
+   * Returns the total spent for all transactions
+   * or a given category
+   * @param {String} category A category of transactions (optional)
+   */
+
+  var getTotal = function getTotal(category) {
+    return transactions.reduce(function(amt, t){
+      return amt += t.amount;
+    }, 0);
   };
 
   /**
