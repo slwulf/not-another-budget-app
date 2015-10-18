@@ -14,6 +14,12 @@
  *   and can rename it something sane. Probably
  *   around the time I write the next data
  *   modules, which describe budgets & income.
+ *
+ *   Actually, income can probably be part of this
+ *   module much more simply, without inheritance.
+ *   Set default category to Income, expose diff
+ *   UI for creating "Income" Transactions that does
+ *   addTransaction() without a category definition.
  */
 
 var data = (function(app) {
@@ -30,19 +36,17 @@ var data = (function(app) {
    * @param {Number} amount Amount of the transaction
    * @param {String} category Meta data
    * @param {Object} date Current date in ms
-   * @return {Object} model A new Transaction object.
+   * @return {Object} transaction A new Transaction object.
    */
 
   var Transaction = function Transaction(obj) {
-    var model = {
+    return {
       id: obj.id || 0,
       description: obj.description || 'transaction',
       amount: obj.amount || 0,
       category: obj.category || 'Default',
       date: obj.date || Date.now()
     };
-
-    return model;
   };
 
   /**

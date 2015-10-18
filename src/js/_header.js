@@ -34,11 +34,9 @@
 // Events (done! except putting events everywhere)
 //
 // Data/Model
-// - Transactions (done!)
+// - Transactions (done! except not really)
 // - Budgets: tracks budget by category
 //            sets category amts to set or %
-// - Income: tracks income (uses transactions
-//           with no category or income category)
 // - Reports: calculates various stats based on
 //              other modules
 //
