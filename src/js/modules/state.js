@@ -10,6 +10,7 @@ var state = {
    * all available functions.
    * @type {Boolean}
    */
+
   isTest: (typeof window === 'undefined')
 
 };

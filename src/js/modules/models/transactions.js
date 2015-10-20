@@ -1,28 +1,8 @@
 /**
  * Transactions Module
- *
- * Author's note: I got so tired of the
- *   word "transaction" by the end of
- *   writing this module that I wanted
- *   to rename the module something sane
- *   and simple like "purchases" or
- *   "expenses". But by that point, I
- *   was in too deep.
- *
- *   That's why this module will remain
- *   the data module until I refactor
- *   and can rename it something sane. Probably
- *   around the time I write the next data
- *   modules, which describe budgets & income.
- *
- *   Actually, income can probably be part of this
- *   module much more simply, without inheritance.
- *   Set default category to Income, expose diff
- *   UI for creating "Income" Transactions that does
- *   addTransaction() without a category definition.
  */
 
-var data = (function(app) {
+var transactions = (function(app) {
   /**
    * Transactions list
    */
@@ -72,6 +52,7 @@ var data = (function(app) {
       transactions.push(transaction);
     } else {
       console.warn('Could not create transaction with id', id);
+      return undefined;
     }
 
     events.trigger('addTransaction', transaction);
@@ -134,6 +115,11 @@ var data = (function(app) {
       return e.id;
     }).indexOf(id);
 
+    if (index < 0) {
+      console.warn('No transaction found for id', id);
+      return undefined;
+    }
+
     // Next, get a reference and alter it
     transaction = transactions[index];
     if (n.description) transaction.description = n.description;
@@ -178,10 +164,16 @@ var data = (function(app) {
    * Returns the total spent for all transactions
    * or a given category
    * @param {String} category A category of transactions (optional)
+   * @return {Number} The total for category or all transactions
    */
 
   var getTotal = function getTotal(category) {
     return transactions.reduce(function(amt, t){
+      if (category) {
+        if (category === t.category) return amt += t.amount;
+        return amt;
+      }
+
       return amt += t.amount;
     }, 0);
   };
@@ -197,6 +189,7 @@ var data = (function(app) {
       get: getTransaction,
       edit: editTransaction,
       remove: deleteTransaction,
+      total: getTotal,
       all: function all() {
         return transactions;
       },
@@ -208,6 +201,7 @@ var data = (function(app) {
 
   // App gets subset
   return {
+    total: getTotal,
     length: function length() {
       return transactions.length;
     }

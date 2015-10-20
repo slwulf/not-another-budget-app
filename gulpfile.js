@@ -6,7 +6,10 @@ var project = {
     src: {
       js: 'src/js/',
       css: 'src/css/',
-      modules: 'src/js/modules/'
+      modules: {
+        root: 'src/js/modules/',
+        models: 'src/js/modules/models/'
+      }
     },
     dist: {
       js: 'dist/',
@@ -22,11 +25,11 @@ var source = {
   // Module build order
   js: [
     project.paths.src.js + '_header.js',
-    project.paths.src.modules + 'state.js',
-    project.paths.src.modules + 'data.js',
-    project.paths.src.modules + 'events.js',
-    // project.paths.src.modules + 'listeners.js',
-    // ??? project.paths.src.modules + 'handlers.js',
+    project.paths.src.modules.root + 'state.js',
+    project.paths.src.modules.root + 'events.js',
+    project.paths.src.modules.models + 'transactions.js',
+    project.paths.src.modules.models + 'budget.js',
+    // project.paths.src.modules.root + 'render.js',
     project.paths.src.js + '_footer.js'
   ],
 
@@ -40,7 +43,7 @@ var source = {
   tests: function tests() {
     return this.js.filter(function(str) {
       // filter out non-modules
-      return str.indexOf(project.paths.src.modules) > -1;
+      return str.indexOf(project.paths.src.modules.root) > -1;
     })
     .concat([
       // add Mocha tests
