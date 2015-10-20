@@ -47,5 +47,14 @@
 // Routes
 // - oh god am i really gonna do routes
 // - yeah i guess i have to
+//
+// OMG SERVER LAYER!
+// - store 5 or 10 or x most recently added records
+//   in localStorage and sync to server when limit
+//   is reached
+// - if limit is reached and server times out, allow
+//   limit to be exceeded for next limit / 2 records,
+//   then retry sync
+// - ta-da! offline-friendly app
 
-(function() {
+(function(window, document) {
