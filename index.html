@@ -3,18 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Budget</title>
-  <link rel="stylesheet" href="dist/versions/0.0.1/budget.css">
+  <link rel="stylesheet" href="dist/versions/0.0.2/budget.css">
 </head>
 <body>
 
-  <h1>myBudget</h1>
+  <header id="header" class="wrapper header">
 
-  <div id="main" class="main">
+    <h1>Not Another Budget App!</h1>
 
-    Loading...
+    <nav id="nav" class="nav">
 
-  </div>
+      <a href="#transactions" class="nav-item current">Transactions</a>
+      <a href="#budget" class="nav-item">Budget</a>
+      <a href="#reports" class="nav-item">Reports</a>
 
-  <script src="dist/versions/0.0.1/budget.js"></script>
+    </nav>
+
+  </header>
+
+  <main id="main" class="wrapper" role="main">
+
+    <article id="transaction" class="template grid transaction" data-model="transaction" data-id="_(model.id)">
+      <span class="transaction-date text-italic">_(model.date)</span>
+      <span class="transaction-category badge-neutral">_(model.category)</span>
+      <span class="transaction-description">_(model.description)</span>
+      <span class="transaction-amount">_(model.amount)</span>
+    </article>
+
+  </main>
+
+  <script src="dist/versions/0.0.2/budget.js"></script>
 </body>
 </html>

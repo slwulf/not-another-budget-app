@@ -1,0 +1,83 @@
+/** UI Colors **/
+// These variables are intended to be used to declare colors
+// from your design. Feel free to change, add, or delete any
+// colors here for your project.
+//
+// Usage:
+//      color: $black;
+
+$black: #000;
+$white: #FFF;
+$gray: #666;
+$light-gray: #CCC;
+$lighter-gray: #DCDCDC;
+$red: #c33;
+$purple: #96a;
+
+$primary-color: $purple;
+
+
+
+/** UI Settings **/
+// Color and sizing options for:
+// Buttons, Modals, Form Inputs, and Text Elements
+// The sections are spaced out in the same order as in global.scss
+// Feel free to add additional blocks as needed for your project
+//
+// Usage:
+//      background-color: $moduleBg;
+
+// _headings.scss
+%heading1 {
+    font-size: 1.7em;
+    font-weight: 700;
+}
+
+%heading2 {
+    font-size: 1.5em;
+    font-weight: 300;
+}
+
+%heading3 {
+    font-size: 1.4em;
+    font-weight: 400;
+}
+
+%heading4 {
+    font-size: 1.25em;
+    font-weight: 300;
+}
+
+%heading5 {
+    font-size: .9em;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+%heading6 {
+    font-size: 1em;
+    font-weight: 300;
+}
+
+
+/** Fonts and Text Sizing **/
+// These are applied to the <html> and <body> tags in the
+// body Sass partial.
+
+$base-font-size: 16px;
+$base-font-family: "Open Sans", sans-serif;
+
+
+/** Margins and Content Sizing **/
+// These define the relative spacing for all elements.
+// In most cases these can be left default, but if your
+// design calls for it feel free to change.
+
+$gutter: 1em; // Consistent margins, padding, etc.
+$wrapper: 1000px; // site wrapper max-width
+
+/** Grid Breakpoints **/
+// Feel free to change these if needed
+$bpSmall: 650px;
+$bpMedium: 800px;
+
