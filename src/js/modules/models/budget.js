@@ -139,6 +139,20 @@ var budget = (function(app) {
   };
 
   /**
+   * Compares transactions to budget category
+   * @param {String} name Category name
+   * @return {Boolean} Returns true if category is over budget
+   */
+
+  var isOverBudget = function isOverBudget(name) {
+    var budget = getBudget(name).amount;
+    var spent = transactions.total(name);
+
+    if (budget && spent) return spent > budget;
+    return false;
+  };
+
+  /**
    * Public Methods
    */
 
@@ -148,6 +162,7 @@ var budget = (function(app) {
       get: getBudget,
       edit: editBudget,
       remove: deleteBudget,
+      isOverBudget: isOverBudget,
       all: function all() {
         return budgets;
       }
@@ -158,7 +173,8 @@ var budget = (function(app) {
     add: addBudget,
     get: getBudget,
     edit: editBudget,
-    remove: deleteBudget
+    remove: deleteBudget,
+    isOverBudget: isOverBudget
   };
 
 })(state);

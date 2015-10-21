@@ -99,10 +99,10 @@ describe('App#budget', function() {
   });
 
   /**
-   * Interact with transactions
+   * .isOverBudget()
    */
 
-  describe('budgeting with transactions', function() {
+  describe('.isOverBudget(name)', function() {
     var t;
 
     before('init', function() {
@@ -119,10 +119,9 @@ describe('App#budget', function() {
     });
 
     it('should know if the user has spent more than budgeted', function() {
-      var budgeted = budget.get('Shopping').amount;
-      var spent = transactions.total('Shopping');
+      var over = budget.isOverBudget('Shopping');
 
-      expect(spent).to.be.above(budgeted);
+      expect(over).to.be.true;
     });
 
     after('exit', function() {
