@@ -176,6 +176,7 @@ var transactions = (function(app) {
   /**
    * Adds a new transaction to the list
    * @param {Object} data Transaction properties
+   * @return {Object} The added transaction
    */
 
   var addTransaction = function addTransaction(data) {
@@ -277,6 +278,7 @@ var transactions = (function(app) {
   /**
    * Deletes a transaction by ID
    * @param {Number} id Unique ID of the transaction
+   * @return {Object} The deleted transaction
    */
 
   var deleteTransaction = function deleteTransaction(id) {
@@ -326,7 +328,6 @@ var transactions = (function(app) {
    * Public Methods
    */
 
-   // Tests get all functions
   if (app.isTest) {
     return {
       add: addTransaction,
@@ -334,17 +335,20 @@ var transactions = (function(app) {
       edit: editTransaction,
       remove: deleteTransaction,
       total: getTotal,
-      all: function all() {
-        return transactions;
-      },
       length: function length() {
         return transactions.length;
+      },
+      all: function all() {
+        return transactions;
       }
     };
   }
 
-  // App gets subset
   return {
+    remove: deleteTransaction,
+    add: addTransaction,
+    get: getTransaction,
+    edit: editTransaction,
     total: getTotal,
     length: function length() {
       return transactions.length;
@@ -382,6 +386,7 @@ var budget = (function(app) {
   /**
    * Adds a new budget to the list
    * @param {Object} data Budget properties
+   * @return {Object} The added budget
    */
 
   var addBudget = function addBudget(data) {
@@ -394,6 +399,15 @@ var budget = (function(app) {
       category: cat,
       amount: amt
     });
+
+    // Check if it already exists
+    var alreadyExists = getBudget(cat);
+    if (alreadyExists) {
+      console.warn('Budget for ', cat, ' already exists.');
+
+      // Return existing budget
+      return alreadyExists;
+    }
 
     // ID should always match
     if (id === budget.id) {
@@ -408,12 +422,91 @@ var budget = (function(app) {
   };
 
   /**
+   * Retrieves budget info by name
+   * @param {String} name Category name
+   * @return {Object} The requested budget
+   */
+
+  var getBudget = function getBudget(name) {
+    var get;
+
+    // If no name passed, get most recent
+    if (name === undefined) {
+      return budgets[budgets.length - 1];
+    }
+
+    // look up the budget
+    get = budgets.filter(function(budget) {
+      return budget.category === name;
+    });
+
+    if (!get[0]) {
+      // No budget found.
+      console.warn('No budget found for name', name);
+      return undefined;
+    }
+
+    return get[0];
+  };
+
+  /**
+   * Updates a budget by category
+   * @param {String} name Category name
+   * @param {Object} n Changes to the budget
+   * @return {Object} The updated budget
+   */
+
+  var editBudget = function editBudget(name, n) {
+    var index = budgets.map(function(b) {
+      return b.category;
+    }).indexOf(name);
+    var budget;
+
+    if (index < 0) {
+      console.warn('No budget found for name', name);
+      return undefined;
+    }
+
+    budget = budgets[index];
+    if (n.category) budget.category = n.category;
+    if (n.amount) budget.amount = n.amount;
+
+    events.trigger('editBudget', budget);
+    return budget;
+  };
+
+  /**
+   * Deletes a budget by category
+   * @param {String} name Category name
+   * @return {Object} The deleted budget
+   */
+
+  var deleteBudget = function deleteBudget(name) {
+    var index = budgets.map(function(budget) {
+      return budget.category;
+    }).indexOf(name);
+    var budget;
+
+    if (index < 0) {
+      console.warn('No transaction found for name', name);
+      return undefined;
+    }
+
+    budget = budgets.splice(index, 1)[0];
+    events.trigger('deleteBudget', budget);
+    return budget;
+  };
+
+  /**
    * Public Methods
    */
 
   if (state.isTest) {
     return {
       add: addBudget,
+      get: getBudget,
+      edit: editBudget,
+      remove: deleteBudget,
       all: function all() {
         return budgets;
       }
@@ -421,15 +514,12 @@ var budget = (function(app) {
   }
 
   return {
-    add: addBudget
+    add: addBudget,
+    get: getBudget,
+    edit: editBudget,
+    remove: deleteBudget
   };
 
 })(state);
-
-
-
-
-
-
 
 })(window, document);
