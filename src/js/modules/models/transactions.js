@@ -32,6 +32,7 @@ var transactions = (function(app) {
   /**
    * Adds a new transaction to the list
    * @param {Object} data Transaction properties
+   * @return {Object} The added transaction
    */
 
   var addTransaction = function addTransaction(data) {
@@ -133,6 +134,7 @@ var transactions = (function(app) {
   /**
    * Deletes a transaction by ID
    * @param {Number} id Unique ID of the transaction
+   * @return {Object} The deleted transaction
    */
 
   var deleteTransaction = function deleteTransaction(id) {
@@ -182,7 +184,6 @@ var transactions = (function(app) {
    * Public Methods
    */
 
-   // Tests get all functions
   if (app.isTest) {
     return {
       add: addTransaction,
@@ -190,17 +191,20 @@ var transactions = (function(app) {
       edit: editTransaction,
       remove: deleteTransaction,
       total: getTotal,
-      all: function all() {
-        return transactions;
-      },
       length: function length() {
         return transactions.length;
+      },
+      all: function all() {
+        return transactions;
       }
     };
   }
 
-  // App gets subset
   return {
+    remove: deleteTransaction,
+    add: addTransaction,
+    get: getTransaction,
+    edit: editTransaction,
     total: getTotal,
     length: function length() {
       return transactions.length;

@@ -101,14 +101,6 @@ describe('App#transactions', function() {
    */
 
   describe('.get(id)', function() {
-    // add some transactions
-    // beforeEach('init', function() {
-    //   x = transactions.add({ description: 'bagels', amount: 1.99, category: 'Groceries' });
-    //   y = transactions.add({ description: 'cream cheese', amount: 0.85, category: 'Groceries' });
-    //   z = transactions.add({ description: 'orange juice', amount: 2.39, category: 'Groceries' });
-    //   ids.concat([x.id, y.id, z.id]);
-    // });
-
     // test lookup by id
     it('should return the correct transaction', function() {
       expect(transactions.get(1).description).to.equal('skateboard');
@@ -217,40 +209,6 @@ describe('App#transactions', function() {
   });
 
   /**
-   * transactions.all()
-   */
-
-  describe('.all()', function() {
-    var all = transactions.all();
-
-    it('should return an array', function() {
-      expect(all).to.be.an.array;
-    });
-
-    it('should have length transactions.length()', function() {
-      expect(all.length).to.equal(transactions.length());
-    });
-  });
-
-  /**
-   * transactions.length()
-   */
-
-  describe('.length()', function() {
-    var length;
-
-    it('should be a number', function() {
-      length = transactions.length();
-      expect(length).to.be.a.number;
-    });
-
-    it('should be equal to transactions.all().length', function() {
-      length = transactions.length();
-      expect(length).to.equal(transactions.all().length);
-    });
-  });
-
-  /**
    * transactions.total(category)
    */
 
@@ -276,6 +234,24 @@ describe('App#transactions', function() {
 
       expect(allTotal).to.equal(all);
       expect(allTotal).to.equal(420);
+    });
+  });
+
+  /**
+   * transactions.length()
+   */
+
+  describe('.length()', function() {
+    var length;
+
+    it('should be a number', function() {
+      length = transactions.length();
+      expect(length).to.be.a.number;
+    });
+
+    it('should be equal to transactions.all().length', function() {
+      length = transactions.length();
+      expect(length).to.equal(transactions.all().length);
     });
   });
 
