@@ -16,8 +16,6 @@ $purple: #96a;
 
 $primary-color: $purple;
 
-
-
 /** UI Settings **/
 // Color and sizing options for:
 // Buttons, Modals, Form Inputs, and Text Elements
@@ -29,36 +27,35 @@ $primary-color: $purple;
 
 // _headings.scss
 %heading1 {
-    font-size: 1.7em;
-    font-weight: 700;
+  font-size: 1.7em;
+  font-weight: 700;
 }
 
 %heading2 {
-    font-size: 1.5em;
-    font-weight: 300;
+  font-size: 1.5em;
+  font-weight: 300;
 }
 
 %heading3 {
-    font-size: 1.4em;
-    font-weight: 400;
+  font-size: 1.4em;
+  font-weight: 400;
 }
 
 %heading4 {
-    font-size: 1.25em;
-    font-weight: 300;
+  font-size: 1.25em;
+  font-weight: 300;
 }
 
 %heading5 {
-    font-size: .9em;
-    font-weight: 700;
-    text-transform: uppercase;
+  font-size: .9em;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
 %heading6 {
-    font-size: 1em;
-    font-weight: 300;
+  font-size: 1em;
+  font-weight: 300;
 }
-
 
 /** Fonts and Text Sizing **/
 // These are applied to the <html> and <body> tags in the
@@ -66,7 +63,6 @@ $primary-color: $purple;
 
 $base-font-size: 16px;
 $base-font-family: "Open Sans", sans-serif;
-
 
 /** Margins and Content Sizing **/
 // These define the relative spacing for all elements.
@@ -80,4 +76,3 @@ $wrapper: 1000px; // site wrapper max-width
 // Feel free to change these if needed
 $bpSmall: 650px;
 $bpMedium: 800px;
-
