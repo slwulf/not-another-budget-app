@@ -2,45 +2,224 @@
  * Render Module
  */
 
-/*
-  HTML rendering should be done primarily on the server.
-  JS should copy DOM elements rendered by the server
-  to be used as templates. Templates should be defined
-  in the HTML
+var render = (function(app) {
 
-  Mark each template with a class `template` and a
-  unique `id`. These will be copied and removed from
-  the DOM at runtime. In CSS, the `template` class
-  should be set to `display: none`. In JS, use the
-  Element#getElementsByClassName method.
-  (JSPerf: https://jsperf.com/getelementsbyclassname-vs-queryselectorall/25)
+  /**
+   * Templates list
+   */
 
-  DOM templates should be exactly what you want the
-  script to reproduce. The `template` class will be
-  removed. The `id` will be converted into a class
-  name which can be styled against and which will
-  be used to select instances of the template in JS.
+  var templates = {};
 
-  Here is a loose spec for a template element in HTML:
-  <nodeName id="my-template-object" class="template" />
+  /**
+   * Template model
+   * @param {Element} node HTML Element
+   * @param {Object} model Data model used by template
+   * @param {Element} parent The parent node of the template
+   */
 
-  A template can be any element with any attributes.
-  It can include classes other than `template`. The template
-  will include any children of the element.
+  var Template = function Template(obj) {
+    return {
+      node: obj.node || document.createDocumentFragment(),
+      model: obj.model || false,
+      parent: obj.parent || document.body
+    };
+  };
 
-  This render module is intended to create multiple copies
-  of a common interface component. As such, rendered templates
-  cannot have IDs of their own by nature. This module is
-  not intended for rendering one-off components.
+  /**
+   * Takes Elements with class name
+   * @return {Array} An array of Template objects
+   */
 
-???
-  One-off components, such as navigation or HUD-likes,
-  should be initially rendered by the DOM. Sometimes,
-  these components will require some information about
-  application state.
+  var getTemplates = function getTemplates() {
+    var nodes = document.getElementsByClassName('template');
+    var keys = Object.keys(nodes);
+    var len = keys.length;
+    var newTemplate;
+    var model;
+    var clone;
+    var node;
+    var id;
+    var i;
 
-  In a separate module, Interactions, we'll house DOM
-  events like `click` and `keyup`. Another module may
-  expose DOM event handlers, if necessary.
-???
- */
+    // Loop through nodes array-like
+    for (i = 0; i < len / 2; i++) {
+      node = nodes[keys[i]];
+      id = node.id;
+
+      // Skip if template already exists
+      if (templates.hasOwnProperty(id)) {
+        node.remove();
+        continue;
+      }
+
+      // Get template components
+      clone = node.cloneNode(true);
+      model = node.dataset ? node.dataset.model : false;
+      parent = node.parentNode;
+
+      // Setup clone classes
+      clone.classList.remove('template');
+      clone.classList.add(id);
+      clone.removeAttribute('id');
+
+      // Create a Template instance
+      newTemplate = Template({
+        node: clone,
+        model: model,
+        parent: parent
+      });
+
+      // Remove template from the DOM
+      node.remove();
+
+      // Add to list
+      templates[id] = newTemplate;
+    }
+  };
+
+  /**
+   * Template string regex
+   * Matches for any string like:
+   *     _(arbitrary.text)
+   */
+
+  var isTemplateString = function isTemplateString(str) {
+    var templateString = /_\(([a-z]*).([a-z]*)\)/gi;
+    return templateString.test(str);
+  };
+
+  /**
+   * Takes a template string like _(model.property)
+   * and a model instance and returns the value
+   * @param {String} tStr A template string
+   * @param {Object} model An instance of a model to render
+   * @return {String} The requested value
+   */
+
+  var parseTemplateString = function parseTemplateString(tStr, model) {
+    // First, remove any _, (, and )
+    var clean = tStr.replace(/[_\(\)]/g, '');
+
+    // Next, split the string at .
+    var parts = clean.split('.');
+
+    // If nothing was split, return
+    if (parts.length === 1) return parts[0];
+
+    // Otherwise, get the key
+    var key = parts[1];
+    var data = model[key];
+
+    // Assume dates are stored in ms & convert them
+    var date;
+    if (key === 'date') {
+      date = new Date(data);
+      return (date.getMonth() + 1) + '/' + date.getDate();
+    }
+
+    // Otherwise, return the requested value
+    return model[key];
+  };
+
+  /**
+   * Takes a DOM node and loops through
+   * dataset and textContent for template strings
+   * @param {Element} node The DOM node
+   * @param {Object} model An instance of a model to render
+   * @return {Element} The same DOM node, parsed
+   */
+
+  var parseNode = function parseNode(node, model) {
+    var dataset = node.dataset;
+    var children = node.children;
+
+    var keys = Object.keys(dataset);
+    var len = keys.length;
+    var parsed;
+    var child;
+    var text;
+    var data;
+    var key;
+    var i;
+
+    // Parse any data attributes
+    for (i = 0; i <= len; i++) {
+      key = keys[i];
+      data = dataset[key];
+
+      if (isTemplateString(data)) {
+        parsed = parseTemplateString(data, model);
+        node.dataset[key] = parsed;
+      }
+    }
+
+    // Parse any children
+    for (i = 0, len = children.length; i < len; i++) {
+      child = children[i];
+      text = child.textContent;
+
+      node.children[i].textContent = parseTemplateString(text, model);
+    }
+
+    // Return the altered node
+    return node.cloneNode(true);
+  };
+
+  /**
+   * Returns a cloned template from the list.
+   * @param {String} name Name of the template to get
+   * @return {Element} A cloned node
+   */
+
+  var getTemplate = function getTemplate(name) {
+    return templates[name].node.cloneNode(true);
+  };
+
+  /**
+   * Initialize
+   */
+
+  // Return test methods
+  if (app.isTest) {
+    return {
+      isTemplateString: isTemplateString,
+      parseTemplateString: parseTemplateString,
+      all: function all() {
+        return templates;
+      }
+    };
+  }
+
+  getTemplates();
+
+  // This section is just for testing at the moment.
+  // Will break out DOM and app event handlers into
+  // a separate module.
+
+  events.on('addTransaction', function(tran) {
+    var newTran = parseNode(getTemplate('transaction'), tran);
+    document.getElementById('main').appendChild(newTran);
+  });
+
+  transactions.add({
+    description: 'test',
+    amount: 4.35,
+    category: 'Test'
+  });
+
+  transactions.add({
+    description: 'another test',
+    amount: 4.20,
+    category: 'Test'
+  });
+
+  /**
+   * Public Methods
+   */
+
+  return {
+    get: getTemplate,
+    parse: parseNode
+  };
+
+})(state);

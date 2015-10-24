@@ -29,7 +29,7 @@ var source = {
     project.paths.src.modules.root + 'events.js',
     project.paths.src.modules.models + 'transactions.js',
     project.paths.src.modules.models + 'budget.js',
-    // project.paths.src.modules.root + 'render.js',
+    project.paths.src.modules.root + 'render.js',
     project.paths.src.js + '_footer.js'
   ],
 
@@ -42,6 +42,9 @@ var source = {
   // Build Mocha tests from source.js
   tests: function tests() {
     return this.js.filter(function(str) {
+      // filter out render
+      if (~str.indexOf('render')) return false;
+
       // filter out non-modules
       return str.indexOf(project.paths.src.modules.root) > -1;
     })
@@ -183,7 +186,7 @@ gulp.task('release', function(){
 
 gulp.task('watch', function(){
     gulp.watch(source.js, ['test', 'js']);
-    gulp.watch(project.paths.src + '**/*.scss', ['css']);
+    gulp.watch(project.paths.src.css + '*.scss', ['css']);
     gulp.watch(project.paths.tests + 'specs/*.js', ['test']);
     // gulp.watch('README.md', 'release');
 });
