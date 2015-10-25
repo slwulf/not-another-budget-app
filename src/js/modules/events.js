@@ -2,7 +2,7 @@
  * Events Module
  */
 
-var events = (function(app) {
+var events = (function events(app) {
   /**
    * Events Object
    */

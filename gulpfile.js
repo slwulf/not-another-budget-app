@@ -30,6 +30,7 @@ var source = {
     project.paths.src.modules.models + 'transactions.js',
     project.paths.src.modules.models + 'budget.js',
     project.paths.src.modules.root + 'render.js',
+    project.paths.src.modules.root + 'handlers.js',
     project.paths.src.js + '_footer.js'
   ],
 
@@ -42,8 +43,9 @@ var source = {
   // Build Mocha tests from source.js
   tests: function tests() {
     return this.js.filter(function(str) {
-      // filter out render
+      // filter out DOM stuff
       if (~str.indexOf('render')) return false;
+      if (~str.indexOf('handlers')) return false;
 
       // filter out non-modules
       return str.indexOf(project.paths.src.modules.root) > -1;

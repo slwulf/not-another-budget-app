@@ -1,0 +1,33 @@
+h1 {
+  color: $darker-purple;
+  font-size: 1.7em;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: 300;
+}
+
+h3 {
+  font-size: 1.4em;
+  font-weight: 400;
+}
+
+h4 {
+  font-size: 1.25em;
+  font-weight: 300;
+}
+
+h5 {
+  margin-bottom: $gutter / 2;
+  color: $darker-gray;
+  font-size: .9em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+h6 {
+  font-size: 1em;
+  font-weight: 300;
+}

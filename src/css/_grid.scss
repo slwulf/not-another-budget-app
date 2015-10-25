@@ -4,10 +4,15 @@
   max-width: $wrapper;
   margin: $gutter auto $gutter * 2;
   padding: 0 $gutter;
+
+  &.med {
+    max-width: 800px;
+  }
 }
 
 // CSS fluid grid system
 .grid {
+  width: 100%;
   margin: 0 0 $gutter 0;
 
   &:after {

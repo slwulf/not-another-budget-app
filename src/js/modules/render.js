@@ -2,7 +2,7 @@
  * Render Module
  */
 
-var render = (function(app) {
+var template = (function render(app) {
 
   /**
    * Templates list
@@ -39,11 +39,17 @@ var render = (function(app) {
     var clone;
     var node;
     var id;
-    var i;
+
+    // FIXME: This doesn't work for elements with
+    // nested children.
 
     // Loop through nodes array-like
-    for (i = 0; i < len / 2; i++) {
-      node = nodes[keys[i]];
+    while (len > 0) {
+      node = nodes[keys[0]];
+
+      // If node is undefined, exit
+      if (!node) break;
+
       id = node.id;
 
       // Skip if template already exists
@@ -71,6 +77,7 @@ var render = (function(app) {
 
       // Remove template from the DOM
       node.remove();
+      len -= 1;
 
       // Add to list
       templates[id] = newTemplate;
@@ -115,6 +122,11 @@ var render = (function(app) {
     if (key === 'date') {
       date = new Date(data);
       return (date.getMonth() + 1) + '/' + date.getDate();
+    }
+
+    // Render amounts with 2 decimals
+    if (key === 'amount') {
+      return model[key].toFixed(2);
     }
 
     // Otherwise, return the requested value
@@ -166,13 +178,32 @@ var render = (function(app) {
   };
 
   /**
-   * Returns a cloned template from the list.
-   * @param {String} name Name of the template to get
-   * @return {Element} A cloned node
+   * Clones a template's node and attaches the
+   * clone to the template's original parent
+   * @param {Object} template A template instance
+   * @param {Object} model Another model's instance
+   * @param {Boolen} append When true, appends the element
    */
 
-  var getTemplate = function getTemplate(name) {
-    return templates[name].node.cloneNode(true);
+  var renderTemplate = function renderTemplate(template, model, append) {
+    var node = template.node.cloneNode(true);
+    var render = parseNode(node, model);
+    var firstChild = template.parent.firstElementChild;
+    var nextChild = firstChild.nextElementSibling;
+
+    if (append === undefined) append = true;
+
+    if (append) {
+      if (firstChild && firstChild.className === node.className) {
+        template.parent.insertBefore(node, firstChild);
+      } else if (nextChild && nextChild.className === node.className) {
+        template.parent.insertBefore(node, nextChild);
+      } else {
+        template.parent.appendChild(node);
+      }
+    }
+
+    return node;
   };
 
   /**
@@ -192,34 +223,15 @@ var render = (function(app) {
 
   getTemplates();
 
-  // This section is just for testing at the moment.
-  // Will break out DOM and app event handlers into
-  // a separate module.
-
-  events.on('addTransaction', function(tran) {
-    var newTran = parseNode(getTemplate('transaction'), tran);
-    document.getElementById('main').appendChild(newTran);
-  });
-
-  transactions.add({
-    description: 'test',
-    amount: 4.35,
-    category: 'Test'
-  });
-
-  transactions.add({
-    description: 'another test',
-    amount: 4.20,
-    category: 'Test'
-  });
-
   /**
    * Public Methods
    */
 
   return {
-    get: getTemplate,
-    parse: parseNode
+    render: renderTemplate,
+    get: function getTemplate(name) {
+      return templates[name];
+    }
   };
 
 })(state);

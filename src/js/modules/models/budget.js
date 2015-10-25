@@ -2,7 +2,7 @@
  * Budget Module
  */
 
-var budget = (function(app) {
+var budget = (function budget(app) {
   /**
    * Budgets list
    */

@@ -21,16 +21,54 @@
 
   </header>
 
-  <main id="main" class="wrapper" role="main">
+  <div class="wrapper med">
+    <main id="main" class="main" role="main">
 
-    <article id="transaction" class="template grid" data-model="transaction" data-id="_(model.id)">
-      <span class="transaction-date text-italic col-1-6">_(model.date)</span>
-      <span class="transaction-category badge-neutral col-1-6">_(model.category)</span>
-      <span class="transaction-description col-1-2">_(model.description)</span>
-      <span class="transaction-amount col-1-6">_(model.amount)</span>
-    </article>
+      <div id="add_transaction" class="transaction-add grid">
+        <div class="col-1-3">
+          <label for="add_description">Description</label>
+          <input id="add_description" type="text">
+        </div>
+        <div class="col-1-3">
+          <label for="add_category">Category</label>
+          <input id="add_category" type="text">
+        </div>
+        <div class="col-1-6">
+          <label for="add_amount">Amount</label>
+          <input id="add_amount" type="text">
+        </div>
+        <div class="col-1-6">
+          <label for="">&nbsp;</label>
+          <button id="add_save" type="submit" class="button-primary">Add</button>
+        </div>
+      </div>
 
-  </main>
+      <article id="transaction" class="template grid" data-model="transaction" data-id="_(model.id)">
+        <span class="transaction-date text-italic col-1-6">_(model.date)</span>
+        <span class="transaction-category col-1-6">_(model.category)</span>
+        <span class="transaction-description col-1-2">_(model.description)</span>
+        <span class="transaction-amount col-1-6">_(model.amount)</span>
+      </article>
+
+      <div id="transaction-edit" class="template grid" data-model="transaction" data-id="_(model.id)">
+        <div class="col-1-3">
+          <label for="edit_description">Description</label>
+          <input id="edit_description" type="text">
+        </div>
+        <div class="col-1-3">
+          <label for="edit_category">Category</label>
+          <input id="edit_category" type="text">
+        </div>
+        <div class="col-1-3">
+          <label for="edit_amount">Amount</label>
+          <input id="edit_amount" type="text">
+        </div>
+
+        <button id="edit_save" type="submit" class="button-primary">Save</button>
+      </div>
+
+    </main>
+  </div>
 
   <script src="dist/versions/0.0.2/budget.js"></script>
 </body>

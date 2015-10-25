@@ -57,4 +57,4 @@
 //   then retry sync
 // - ta-da! offline-friendly app
 
-(function(window, document) {
+(function App(window, document) {

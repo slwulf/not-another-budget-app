@@ -1,0 +1,21 @@
+.nav-item {
+  display: inline-block;
+  margin: 0 $gutter / 2 0 0;
+  border-bottom: 3px solid currentColor;
+  color: $purple;
+  font-size: .9em;
+  font-weight: bold;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color .2s, border .2s, transform .2s;
+
+  &:hover,
+  &.current {
+    color: $darker-purple;
+  }
+
+  &:hover,
+  &:active {
+    transform: translateY(2px);
+  }
+}

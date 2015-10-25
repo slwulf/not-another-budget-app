@@ -1,0 +1,66 @@
+/**
+ * Transaction Box
+ */
+
+.transaction {
+  margin-bottom: $gutter / 4;
+  padding: $gutter / 2 $gutter;
+  border-top: 3px solid $purple;
+  background-color: $light-gray;
+  background: linear-gradient(to top, $gray 5%, $light-gray 95%);
+  background-size: 100% 500%;
+  background-position: 0 5%;
+  color: $dark-gray;
+  transition: background .2s, color .2s, transform .2s;
+  cursor: pointer;
+
+  &:hover,
+  &.active {
+    background-position: 0 40%;
+    color: $darker-gray;
+    transform: translateY(2px);
+  }
+
+  &.active {
+    margin-bottom: 0;
+  }
+}
+
+/**
+ * Box Components
+ */
+
+.transaction-date {
+  color: $gray;
+}
+
+.transaction-amount {
+  text-align: right;
+
+  &:before {
+    content: '$';
+  }
+}
+
+/**
+ * Edit Panel
+ */
+
+.transaction-edit {
+  margin-bottom: $gutter / 4;
+  padding: $gutter / 2 $gutter;
+  border-bottom: 3px solid $darker-purple;
+  background-color: darken($dark-purple, 5);
+  background: linear-gradient(to bottom, darken($dark-purple, 10) 3%, darken($dark-purple, 5) 10%, $darker-purple 100%);
+}
+
+/**
+ * Add Panel
+ */
+
+.transaction-add {
+  margin-bottom: $gutter / 2;
+  padding: $gutter / 2 $gutter;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, $gray 40%, $dark-gray 95%);
+}

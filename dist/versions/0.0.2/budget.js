@@ -57,7 +57,7 @@
 //   then retry sync
 // - ta-da! offline-friendly app
 
-(function(window, document) {
+(function App(window, document) {
 
 /**
  * State
@@ -80,7 +80,7 @@ var state = {
  * Events Module
  */
 
-var events = (function(app) {
+var events = (function events(app) {
   /**
    * Events Object
    */
@@ -146,7 +146,7 @@ var events = (function(app) {
  * Transactions Module
  */
 
-var transactions = (function(app) {
+var transactions = (function transactions(app) {
   /**
    * Transactions list
    */
@@ -361,7 +361,7 @@ var transactions = (function(app) {
  * Budget Module
  */
 
-var budget = (function(app) {
+var budget = (function budget(app) {
   /**
    * Budgets list
    */
@@ -542,7 +542,7 @@ var budget = (function(app) {
  * Render Module
  */
 
-var render = (function(app) {
+var template = (function render(app) {
 
   /**
    * Templates list
@@ -579,11 +579,17 @@ var render = (function(app) {
     var clone;
     var node;
     var id;
-    var i;
+
+    // FIXME: This doesn't work for elements with
+    // nested children.
 
     // Loop through nodes array-like
-    for (i = 0; i < len / 2; i++) {
-      node = nodes[keys[i]];
+    while (len > 0) {
+      node = nodes[keys[0]];
+
+      // If node is undefined, exit
+      if (!node) break;
+
       id = node.id;
 
       // Skip if template already exists
@@ -611,6 +617,7 @@ var render = (function(app) {
 
       // Remove template from the DOM
       node.remove();
+      len -= 1;
 
       // Add to list
       templates[id] = newTemplate;
@@ -655,6 +662,11 @@ var render = (function(app) {
     if (key === 'date') {
       date = new Date(data);
       return (date.getMonth() + 1) + '/' + date.getDate();
+    }
+
+    // Render amounts with 2 decimals
+    if (key === 'amount') {
+      return model[key].toFixed(2);
     }
 
     // Otherwise, return the requested value
@@ -706,13 +718,32 @@ var render = (function(app) {
   };
 
   /**
-   * Returns a cloned template from the list.
-   * @param {String} name Name of the template to get
-   * @return {Element} A cloned node
+   * Clones a template's node and attaches the
+   * clone to the template's original parent
+   * @param {Object} template A template instance
+   * @param {Object} model Another model's instance
+   * @param {Boolen} append When true, appends the element
    */
 
-  var getTemplate = function getTemplate(name) {
-    return templates[name].node.cloneNode(true);
+  var renderTemplate = function renderTemplate(template, model, append) {
+    var node = template.node.cloneNode(true);
+    var render = parseNode(node, model);
+    var firstChild = template.parent.firstElementChild;
+    var nextChild = firstChild.nextElementSibling;
+
+    if (append === undefined) append = true;
+
+    if (append) {
+      if (firstChild && firstChild.className === node.className) {
+        template.parent.insertBefore(node, firstChild);
+      } else if (nextChild && nextChild.className === node.className) {
+        template.parent.insertBefore(node, nextChild);
+      } else {
+        template.parent.appendChild(node);
+      }
+    }
+
+    return node;
   };
 
   /**
@@ -732,35 +763,94 @@ var render = (function(app) {
 
   getTemplates();
 
-  // This section is just for testing at the moment.
-  // Will break out DOM and app event handlers into
-  // a separate module.
-
-  events.on('addTransaction', function(tran) {
-    var newTran = parseNode(getTemplate('transaction'), tran);
-    document.getElementById('main').appendChild(newTran);
-  });
-
-  transactions.add({
-    description: 'test',
-    amount: 4.35,
-    category: 'Test'
-  });
-
-  transactions.add({
-    description: 'another test',
-    amount: 4.20,
-    category: 'Test'
-  });
-
   /**
    * Public Methods
    */
 
   return {
-    get: getTemplate,
-    parse: parseNode
+    render: renderTemplate,
+    get: function getTemplate(name) {
+      return templates[name];
+    }
   };
+
+})(state);
+
+/**
+ * Event Handlers
+ */
+
+var handlers = (function handlers(app) {
+
+  /**
+   * DOM Event Listeners
+   */
+
+  var add_transaction = document.getElementById('add_transaction');
+
+  add_transaction.addEventListener('click', function(e) {
+    var desc = document.getElementById('add_description');
+    var cat = document.getElementById('add_category');
+    var amt = document.getElementById('add_amount');
+    var el = e.target || e.srcElement;
+
+    if (el && el.id === 'add_save') {
+      e.preventDefault();
+
+      transactions.add({
+        description: desc.value,
+        category: cat.value,
+        amount: parseInt(amt.value, 10)
+      });
+    }
+  });
+
+  // Listeners on dynamically added elements
+  document.addEventListener('click', function(event) {
+    event = event || window.event;
+
+    var el = event.target || event.srcElement;
+    var parent = el.parentNode;
+
+    var isTransaction =
+      (el.classList.contains('transaction') ||
+      parent.classList.contains('transaction'));
+
+    var target;
+    var dataId;
+
+    if (el) {
+      // Transactions
+      if (isTransaction) {
+        target = el.classList.contains('transaction') ? el : parent;
+        dataId = el.dataset.id || parent.dataset.id;
+        showEditPanel(dataId, target);
+      }
+    }
+  }, true);
+
+  /**
+   * App Event Listeners
+   */
+
+  events.on('addTransaction', function(tran) {
+    var tmp = template.get('transaction');
+    template.render(tmp, tran);
+  });
+
+  /**
+   * Event Handlers
+   */
+
+  function showEditPanel(data, elem) {
+    var id = parseInt(data, 10);
+    var panel = template.get('transaction-edit');
+    var model = transactions.get(id);
+    var rendered = template.render(panel, model, false);
+
+    console.log(elem);
+    console.log(rendered);
+  }
 
 })(state);
 

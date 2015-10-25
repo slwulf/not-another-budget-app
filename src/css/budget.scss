@@ -1,6 +1,17 @@
+// init
 @import 'config';
 @import 'normalize';
 @import 'body';
+
+// layout
 @import 'grid';
 
+// elements
 @import 'image';
+@import 'typography';
+@import 'form';
+
+// components
+@import 'transaction';
+@import 'nav';
+@import 'interface';

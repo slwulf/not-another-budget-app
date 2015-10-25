@@ -2,7 +2,7 @@
  * Transactions Module
  */
 
-var transactions = (function(app) {
+var transactions = (function transactions(app) {
   /**
    * Transactions list
    */
