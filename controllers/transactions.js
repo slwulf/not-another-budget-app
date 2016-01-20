@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var db = require('mongoose');
 
 /**
  * get
@@ -9,7 +9,7 @@ var mongoose = require('mongoose');
  */
 
 var get = function get(req, res, next) {
-  var t = mongoose.model('transactions').find();
+  var t = db.model('transactions').find();
   var category = req.params.category;
   var year = req.params.year;
   var month = req.params.month;
@@ -32,7 +32,7 @@ var get = function get(req, res, next) {
  */
 
 var render = function render(req, res, next) {
-  mongoose.model('transactions').find(function(err, list) {
+  db.model('transactions').find(function(err, list) {
     if (err) next(err);
     res.render('index', {
       title: 'Not Another Budget App',

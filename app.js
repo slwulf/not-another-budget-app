@@ -26,7 +26,7 @@ var routes = require('./routes/index');
 app.use('/', routes);
 
 // views
-var hbs = require('./controllers/handlebars');
+var hbs = require('./config/handlebars');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', hbs.engine);
 app.set('view engine', '.hbs');

@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+var db = require('mongoose');
 
 /**
  * status
@@ -8,8 +8,8 @@ var mongoose = require('mongoose');
  */
 
 var status = function status(req, res, next) {
-  var t = mongoose.model('transactions').find();
-  var b = mongoose.model('budgets').findOne();
+  var t = db.model('transactions').find();
+  var b = db.model('budgets').findOne();
   var category = { category: req.params.category };
 
   t = t.where(category);
@@ -44,11 +44,12 @@ var status = function status(req, res, next) {
 /**
  * get
  *
- * Returns a list of all budgets.
+ * Returns a list of all budgets or
+ * a specific budget given a category name.
  */
 
 var get = function get(req, res, next) {
-  var b = mongoose.model('budgets').find();
+  var b = db.model('budgets').find();
   var category = req.params.category;
 
   if (category) b = b.where({ category: category });
@@ -62,11 +63,11 @@ var get = function get(req, res, next) {
 /**
  * render
  *
- * Renders the view for transactions.
+ * Renders the view for budgets.
  */
 
 var render = function render(req, res, next) {
-  mongoose.model('budgets').find(function(err, list) {
+  db.model('budgets').find(function(err, list) {
     if (err) next(err);
     res.render('index', {
       title: 'Not Another Budget App',
