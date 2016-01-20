@@ -8,26 +8,40 @@ var mongoose = require('mongoose');
  * or date.
  */
 
-var get = function(req, res, next) {
+var get = function get(req, res, next) {
   var t = mongoose.model('transactions').find();
   var category = req.params.category;
   var year = req.params.year;
   var month = req.params.month;
 
   if (category) t = t.where({ category: category });
-  if (year) {
-    t = t.where({  });
-  }
+  // if (year) {
+  //   t = t.where({  });
+  // }
 
   t.exec(function(err, list) {
-    if (err) {
-      next(err);
-    } else {
-      res.send(list);
-    }
+    if (err) next(err);
+    res.send(list);
   });
 };
 
+/**
+ * render
+ *
+ * Renders the view for transactions.
+ */
+
+var render = function render(req, res, next) {
+  mongoose.model('transactions').find(function(err, list) {
+    if (err) next(err);
+    res.render('index', {
+      title: 'Not Another Budget App',
+      transactions: list
+    });
+  })
+};
+
 module.exports = {
-  get: get
+  get: get,
+  render: render
 };

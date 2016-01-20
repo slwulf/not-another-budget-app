@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 
 /**
- * onBudget
+ * status
  *
  * Determines whether a given category
  * of transaction is on budget.
  */
 
-var onBudget = function onBudget(req, res, next) {
+var status = function status(req, res, next) {
   var t = mongoose.model('transactions').find();
   var b = mongoose.model('budgets').findOne();
   var category = { category: req.params.category };
@@ -59,7 +59,24 @@ var get = function get(req, res, next) {
   });
 };
 
+/**
+ * render
+ *
+ * Renders the view for transactions.
+ */
+
+var render = function render(req, res, next) {
+  mongoose.model('budgets').find(function(err, list) {
+    if (err) next(err);
+    res.render('index', {
+      title: 'Not Another Budget App',
+      budgets: list
+    });
+  })
+};
+
 module.exports = {
   get: get,
-  status: onBudget
+  status: status,
+  render: render
 };
