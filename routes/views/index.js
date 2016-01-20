@@ -4,7 +4,7 @@ var router = express.Router();
 var transactions = require('./transactions');
 var budgets = require('./budgets');
 
-module.exports = {
-  transactions: transactions,
-  budgets: budgets
-};
+router.use('/', transactions);
+router.use('/budgets', budgets);
+
+module.exports = router;
