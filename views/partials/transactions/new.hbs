@@ -1,1 +1,31 @@
-<!-- form here -->
+<div class="panel panel-default">
+  <form action="/api/transactions/new" method="POST" class="panel-body">
+    <div class="form-group">
+      <label for="description">Description</label>
+      <input type="text" class="form-control" id="description" name="description">
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="category">Category</label>
+          <input type="text" class="form-control" id="category" name="category">
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" id="amount" name="amount" placeholder="-12.99">
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <div class="form-group">
+          <label for="date">Date</label>
+          <input type="text" class="form-control" id="date" name="date" placeholder="mm/dd/yyyy">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Transaction</button>
+  </form>
+</div>
