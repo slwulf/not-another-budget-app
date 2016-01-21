@@ -1,4 +1,5 @@
 var hbs = require('express-handlebars');
+var numeral = require('numeral');
 
 module.exports = hbs.create({
 
@@ -40,6 +41,17 @@ module.exports = hbs.create({
       }
 
       return ret;
+    },
+
+    /**
+     * {{money number}}
+     * Formats a number or integer as a
+     * curency string.
+     */
+
+    money: function(number) {
+      if (typeof number !== 'number') return number;
+      return numeral(number).format('$0,0.00');
     }
 
   }
