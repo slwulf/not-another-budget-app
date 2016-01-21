@@ -31,3 +31,6 @@ npm-debug.log
 
 # Sublime Text project files
 *.sublime-*
+
+# Data CSVs
+csv/
