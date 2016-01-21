@@ -1,7 +1,7 @@
 var fs = require('fs');
 var db = require('mongoose');
 
-module.exports = function importCSV(file) {
+module.exports = function importCSV(file, cb, next) {
   var model = db.model('transactions');
 
   // clean and get array
@@ -31,7 +31,9 @@ module.exports = function importCSV(file) {
     // load models into db
     .map(function(doc) {
       model.create(doc, function(err) {
-        if (err) console.log(err);
+        if (err) next(err);
       });
     });
+
+  cb({ status: 201, message: 'Import successful.' });
 }
