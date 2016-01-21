@@ -15,24 +15,4 @@ var transactionsSchema = new Schema({
 });
 
 // register model with schema
-var T = db.model('transactions', transactionsSchema);
-
-// create a few
-[
-  { description: 'test',
-    amount: 99,
-    category: 'Test' },
-  { description: 'another test',
-    amount: 99,
-    category: 'Test' },
-  { description: 'a thingy',
-    amount: 99,
-    category: 'Poop' },
-  { description: 'wat',
-    amount: 99,
-    category: 'Poop' },
-].map(function(tr) {
-  T.create(tr, function(err, t) {
-    if (err) console.log(err);
-  });
-});
+db.model('transactions', transactionsSchema);
