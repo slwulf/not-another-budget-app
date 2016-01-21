@@ -26,6 +26,22 @@ var get = function get(req, res, next) {
 };
 
 /**
+ * categories
+ *
+ * Returns a list of all distinct
+ * categories of transactions.
+ */
+
+var categories = function categories(req, res, next) {
+  var t = db.model('transactions').find();
+  t.distinct('category');
+  t.exec(function(err, list) {
+    if (err) next(err);
+    res.send(list);
+  });
+}
+
+/**
  * render
  *
  * Renders the view for transactions.
@@ -43,5 +59,6 @@ var render = function render(req, res, next) {
 
 module.exports = {
   get: get,
+  categories: categories,
   render: render
 };
