@@ -149,7 +149,33 @@ var render = function render(req, res, next) {
       return 0;
     }).reverse();
 
-    res.render('index', { transactions: sorted });
+    // total all amounts
+    var total = list.reduce(function(sum, t) {
+      return sum += t.amount;
+    }, 0);
+
+    // total income
+    var totalIn = list.reduce(function(sum, t) {
+      if (t.amount > 0) return sum += t.amount;
+      return sum;
+    }, 0);
+
+    // total expenses
+    var totalOut = list.reduce(function(sum, t) {
+      if (t.amount < 0) return sum += t.amount;
+      return sum;
+    }, 0);
+
+    res.render('index', {
+      transactions: sorted,
+      totals: {
+        all: total,
+        income: totalIn,
+        expenses: totalOut
+      },
+      category: category || '',
+      date: date.format('MMMM YYYY')
+    });
   });
 };
 
