@@ -42,6 +42,51 @@ var status = function status(req, res, next) {
 };
 
 /**
+ * statusAll
+ *
+ * Returns a list of all budgets
+ * including the status of each.
+ */
+
+var statusAll = function statusAll(cb, errorHandler) {
+  var t = db.model('transactions').find();
+  var b = db.model('budgets').find();
+
+  // first, get transactions
+  t.exec(function(err, list) {
+    if (err) errorHandler(err);
+
+    // get totals by category
+    var totals = list.reduce(function(obj, l) {
+      var prev = obj[l.category] || 0;
+      obj[l.category] = prev + l.amount;
+      return obj;
+    }, {});
+
+    // next, get budgets
+    b.exec(function(err, budgets) {
+      if (err) errorHandler(err);
+
+      // build array of budget objects
+      var resp = budgets.map(function(x) {
+        var cat = x.category;
+        var amt = x.amount;
+        var total = totals[cat];
+
+        return {
+          category: cat,
+          amount: amt,
+          totalSpent: total,
+          isOver: (total > amt)
+        };
+      });
+
+      cb(resp);
+    });
+  });
+};
+
+/**
  * get
  *
  * Returns a list of all budgets or
@@ -67,13 +112,11 @@ var get = function get(req, res, next) {
  */
 
 var render = function render(req, res, next) {
-  db.model('budgets').find(function(err, list) {
-    if (err) next(err);
-    res.render('index', {
-      title: 'Not Another Budget App',
-      budgets: list
+  statusAll(function(budgets) {
+    res.render('budgets', {
+      budgets: budgets
     });
-  })
+  }, next);
 };
 
 module.exports = {

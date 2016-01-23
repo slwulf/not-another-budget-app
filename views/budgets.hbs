@@ -1,0 +1,9 @@
+<h3>Budgets</h3>
+
+{{> budgets/new}}
+
+<ul class="list-group">
+{{#each budgets}}
+  {{> budgets/single}}
+{{/each}}
+</ul>
