@@ -25,7 +25,9 @@ router.get('/:category', transactions.get);
 router.post('/new', transactions.post);
 router.post('/import', function(req, res, next) {
   var csv = req.body.csv;
-  importCSV(csv, res.send, next);
+  importCSV(csv, function() {
+    res.redirect('/');
+  }, next);
 });
 
 /**
