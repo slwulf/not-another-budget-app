@@ -1,5 +1,12 @@
 <div class="panel panel-default">
-  <form action="/api/transactions/new" method="POST" class="panel-body">
+  <div class="panel-heading">
+    Add a Transaction
+    <button class="btn btn-link btn-xs pull-right" data-toggle="collapse" data-target="#addTransaction" aria-label="Toggle">
+      <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <form action="/api/transactions/new" method="POST" class="panel-body collapse" id="addTransaction">
     <div class="form-group">
       <label for="description">Description</label>
       <input type="text" class="form-control" id="description" name="description">
