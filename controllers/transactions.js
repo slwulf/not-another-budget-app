@@ -124,14 +124,14 @@ var render = function render(req, res, next) {
   var month = req.params.month;
 
   var date = month ? moment().set({ year: year, month: month }) : moment();
-  var dateMin = date.clone().date(1);
+  var dateMin = date.clone().startOf('month');
   var dateMax = date.clone().endOf('month');
 
   var transactions = db.model('transactions')
     .find()
     .where('date')
-      .gt(dateMin.toDate())
-      .lt(dateMax.toDate());
+      .gte(dateMin.toDate())
+      .lte(dateMax.toDate());
 
   if (category) {
     transactions = transactions
