@@ -1,11 +1,13 @@
-<li data-id="{{_id}}" class="list-group-item row">
+<li data-id="{{ _id }}" class="transaction list-group-item row">
   <div class="col-xs-2">
-    <span class="label label-primary">{{category}}</span>
+    <span data-key="category" contenteditable="true" class="label label-primary transaction-category">{{ category }}</span>
   </div>
   <div class="col-xs-5">
-    <span>{{description}}</span>
+    <span data-key="date" contenteditable="true" class="transaction-date">{{ parseDate date }}</span>
+    <span> - </span>
+    <span data-key="description" contenteditable="true" class="transaction-description">{{ description }}</span>
   </div>
   <div class="col-xs-5 text-right">
-    <strong>{{money amount}}</strong>
+    <strong data-key="amount" contenteditable="true" class="transaction-amount">{{ money amount }}</strong>
   </div>
 </li>
