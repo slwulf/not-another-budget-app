@@ -1,5 +1,6 @@
 var db = require('mongoose');
 var numeral = require('numeral');
+var moment = require('moment');
 
 /**
  * get
@@ -59,7 +60,7 @@ var post = function post(req, res, next) {
 
 var put = function put(req, res, next) {
   var id = req.body.id;
-  var description = req.body.id;
+  var description = req.body.description;
   var amount = req.body.amount;
   var category = req.body.category;
   var date = req.body.date;
@@ -68,12 +69,13 @@ var put = function put(req, res, next) {
     if (err) next(err);
 
     if (description) tr.description = description.trim();
-    if (amount) tr.amount = parseFloat(amount);
+    if (amount) tr.amount = parseFloat(amount.replace('$', ''));
     if (category) tr.category = category.trim();
     if (date) tr.date = new Date(date);
 
     tr.save(function(err) {
       if (err) next(err);
+      tr.amount = numeral(tr.amount).format('$0,0.00');
       res.send(tr);
     });
   });
@@ -112,15 +114,42 @@ var categories = function categories(cb, next) {
  * render
  *
  * Renders the view for transactions.
+ * By default, renders transactions for current month.
+ * Can also render by category and/or year + month.
  */
 
 var render = function render(req, res, next) {
-  db.model('transactions').find(function(err, list) {
+  var category = req.params.category;
+  var year = req.params.year;
+  var month = req.params.month;
+
+  var date = month ? moment().set({ year: year, month: month }) : moment();
+  var dateMin = date.clone().date(1);
+  var dateMax = date.clone().endOf('month');
+
+  var transactions = db.model('transactions')
+    .find()
+    .where('date')
+      .gt(dateMin.toDate())
+      .lt(dateMax.toDate());
+
+  if (category) {
+    transactions = transactions
+      .where('category')
+      .equals(category);
+  }
+
+  transactions.exec(function(err, list) {
     if (err) next(err);
-    res.render('index', {
-      title: 'Not Another Budget App',
-      transactions: list
-    });
+
+    // sort by date
+    var sorted = list.sort(function(a, b) {
+      if (a.date < b.date) return -1;
+      if (a.date > b.date) return 1;
+      return 0;
+    }).reverse();
+
+    res.render('index', { transactions: sorted });
   });
 };
 
