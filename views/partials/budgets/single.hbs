@@ -1,18 +1,24 @@
 <li data-id="{{ _id }}" class="budget list-group-item row">
   <div class="col-xs-8">
-    <span data-key="category" contenteditable="true" class="budget-category">{{ category }}</span>
-  </div>
-  <div class="col-xs-2 text-right">
-    <strong data-key="amount" contenteditable="true" class="budget-amount">{{ money amount }}</strong>
-  </div>
-  <div class="col-xs-2 text-right">
-    {{#compare isOver "==" true}}
-    <span class="budget-total label label-danger">
-    {{/compare}}
-    {{#compare isOver "==" false}}
-    <span class="budget-total label label-success">
-    {{/compare}}
-      {{ money totalSpent }}
+    <span data-key="category" contenteditable="true">
+      {{ category }}
     </span>
+  </div>
+  <div class="col-xs-2 text-right">
+    <strong data-key="amount" contenteditable="true">
+      {{ money amount }}
+    </strong>
+  </div>
+  <div class="col-xs-2 text-right">
+    <strong
+      {{#compare isOver "==" true}}
+      class="budget-total label label-danger"
+      {{/compare}}
+      {{#compare isOver "==" false}}
+      class="budget-total label label-success"
+      {{/compare}}
+    >
+      {{ money totalSpent }}
+    </strong>
   </div>
 </li>
