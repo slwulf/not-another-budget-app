@@ -15,8 +15,8 @@ router.get('/categories', function(req, res, next) {
 
 // variable
 router.get('/:category', transactions.get);
-// router.get('/:year/:month', transactions.get);
-// router.get('/:year/:month/:category', transactions.get);
+router.get('/:year/:month', transactions.get);
+router.get('/:year/:month/:category', transactions.get);
 
 /**
  * POST
