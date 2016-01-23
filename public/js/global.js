@@ -103,11 +103,70 @@
     updateTransaction(transaction);
   }
 
+  /**
+   * updateBudget
+   *
+   * Given a budget object, send a
+   * PUT request to the server to
+   * update record at budget.id
+   *
+   * @param {Object} budget Field updates and an id
+   * @param {Function} cb A callback function
+   */
+
+  function updateBudget(budget, cb) {
+    var update = { id: budget.id };
+    var category = budget.category;
+    var amount = budget.amount;
+    var success = cb || function(x){console.log(x)};
+
+    if (category) update.category = category;
+    if (amount) update.amount = amount;
+
+    $.ajax({
+      method: 'PUT',
+      url: '/api/budgets/update',
+      data: update,
+      dataType: 'json',
+      success: success,
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  }
+
+  /**
+   * editBudget
+   *
+   * Handles contenteditable input event
+   * emitted from budget fields
+   *
+   * @param {Object} event An event payload
+   */
+
+  function editBudget(event) {
+    var $event = $(event.target);
+    var $budget = $event.parents('.budget');
+    var id = $budget.data('id');
+    var key = $event.data('key');
+    var value = $event.text();
+    var budget = { id: id };
+    budget[key] = value;
+
+    updateBudget(budget);
+  }
+
   $(document).ready(function() {
     var $transactions = $('.transaction');
+    var $budgets = $('.budget');
+
     $transactions
       .on('input', '[contenteditable="true"]',
       debounce(editTransaction, 500));
+
+    $budgets
+      .on('input', '[contenteditable="true"]',
+      debounce(editBudget, 500));
   });
 
 })(jQuery);
