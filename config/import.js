@@ -35,5 +35,6 @@ module.exports = function importCSV(file, cb, next) {
       });
     });
 
-  cb({ status: 201, message: 'Import successful.' });
+  // res.send
+  if (cb) cb({ status: 201, message: 'Import successful.' });
 }
