@@ -1,0 +1,27 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Add a Budget
+    <button class="btn btn-link btn-xs pull-right" data-toggle="collapse" data-target="#addBudget" aria-label="Toggle">
+      <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <form action="/api/budgets/new" method="POST" class="panel-body collapse" id="addBudget">
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label for="category">Category</label>
+          <input type="text" class="form-control" id="category" name="category">
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="text" class="form-control" id="amount" name="amount" placeholder="-12.99">
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Budget</button>
+  </form>
+</div>
