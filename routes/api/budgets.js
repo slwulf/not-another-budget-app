@@ -6,6 +6,8 @@ router.get('/', budgets.get);
 router.get('/:category', budgets.get);
 router.get('/:category/status', budgets.status);
 
+router.post('/new', budgets.post);
+
 router.put('/update', budgets.put);
 
 module.exports = router;

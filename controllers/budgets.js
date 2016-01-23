@@ -108,6 +108,26 @@ var get = function get(req, res, next) {
 };
 
 /**
+ * post
+ *
+ * Creates a new budget given
+ * some data.
+ */
+
+var post = function post(req, res, next) {
+  var amount = req.body.amount || 0;
+  var category = req.body.category || 'Default';
+
+  db.model('budgets').create({
+    amount: amount,
+    category: category
+  }, function(err) {
+    if (err) next(err);
+    res.redirect('/budgets');
+  });
+};
+
+/**
  * put
  *
  * Updates a specific budget given
@@ -150,6 +170,7 @@ var render = function render(req, res, next) {
 
 module.exports = {
   get: get,
+  post: post,
   put: put,
   status: status,
   render: render
