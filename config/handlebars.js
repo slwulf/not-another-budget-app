@@ -44,7 +44,7 @@ module.exports = hbs.create({
     },
 
     /**
-     * {{money number}}
+     * {{money Number}}
      * Formats a number or integer as a
      * curency string.
      */
@@ -52,6 +52,19 @@ module.exports = hbs.create({
     money: function(number) {
       if (typeof number !== 'number') return number;
       return numeral(number).format('$0,0.00');
+    },
+
+    /**
+     * {{parseDate Date}}
+     * Formats a date object as a simple
+     * date string.
+     */
+
+    parseDate: function(date) {
+      var month = date.getMonth() + 1;
+      var day = date.getDate();
+      var year = date.getFullYear();
+      return month + '/' + day + '/' + year;
     }
 
   }
