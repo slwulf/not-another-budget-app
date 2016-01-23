@@ -1,4 +1,5 @@
 var db = require('mongoose');
+var numeral = require('numeral');
 
 /**
  * status
@@ -74,10 +75,11 @@ var statusAll = function statusAll(cb, errorHandler) {
         var total = totals[cat];
 
         return {
+          _id: x._id,
           category: cat,
           amount: amt,
-          totalSpent: total,
-          isOver: (total > amt)
+          totalSpent: Math.abs(total) || 0,
+          isOver: (Math.abs(total) > amt)
         };
       });
 
@@ -106,6 +108,32 @@ var get = function get(req, res, next) {
 };
 
 /**
+ * put
+ *
+ * Updates a specific budget given
+ * an id and some changes.
+ */
+
+var put = function put(req, res, next) {
+  var id = req.body.id;
+  var amount = req.body.amount;
+  var category = req.body.category;
+
+  db.model('budgets').findById(id, function(err, b) {
+    if (err) next(err);
+
+    if (amount) b.amount = parseFloat(amount.replace('$', ''));
+    if (category) b.category = category.trim();
+
+    b.save(function(err) {
+      if (err) next(err);
+      b.amount = numeral(b.amount).format('$0,0.00');
+      res.send(b);
+    });
+  });
+};
+
+/**
  * render
  *
  * Renders the view for budgets.
@@ -114,6 +142,7 @@ var get = function get(req, res, next) {
 var render = function render(req, res, next) {
   statusAll(function(budgets) {
     res.render('budgets', {
+      cache: false,
       budgets: budgets
     });
   }, next);
@@ -121,6 +150,7 @@ var render = function render(req, res, next) {
 
 module.exports = {
   get: get,
+  put: put,
   status: status,
   render: render
 };
