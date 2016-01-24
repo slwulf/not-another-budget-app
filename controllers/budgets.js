@@ -73,13 +73,17 @@ var statusAll = function statusAll(cb, errorHandler) {
         var cat = x.category;
         var amt = x.amount;
         var total = totals[cat];
+        var totalSpent = Math.abs(total) || 0;
+        var isOver = (totalSpent > amt);
+        var remainder = (amt - totalSpent);
 
         return {
           _id: x._id,
           category: cat,
           amount: amt,
-          totalSpent: Math.abs(total) || 0,
-          isOver: (Math.abs(total) > amt)
+          totalSpent: totalSpent,
+          remainder: remainder,
+          isOver: isOver
         };
       });
 
