@@ -122,8 +122,12 @@ var render = function render(req, res, next) {
   var category = req.params.category;
   var year = req.params.year;
   var month = req.params.month;
+  var currentDate = {
+    year: parseInt(year, 10),
+    month: parseInt(month, 10) - 1
+  };
 
-  var date = month ? moment().set({ year: year, month: month }) : moment();
+  var date = month && year ? moment().set(currentDate) : moment();
   var dateMin = date.clone().startOf('month');
   var dateMax = date.clone().endOf('month');
 
