@@ -54,10 +54,7 @@ var statusAll = function statusAll(cb, errorHandler, opts) {
   var t = db.model('transactions').find();
   var b = db.model('budgets').find();
 
-  var today = moment();
-  var year = opts.year ? parseInt(opts.year, 10) : moment().year();
-  var month = opts.month ? parseInt(opts.month, 10) - 1 : moment().month();
-  var currentDate = moment().set({ year: year, month: month });
+  var currentDate = moment().set({ year: opts.year, month: opts.month });
   var dateMin = currentDate.clone().startOf('month');
   var dateMax = currentDate.clone().endOf('month');
 
@@ -70,8 +67,8 @@ var statusAll = function statusAll(cb, errorHandler, opts) {
   t.exec(function(err, list) {
     if (err) errorHandler(err);
 
-    // get totals by category
-    var totals = list.reduce(function(obj, l) {
+    // get categories by category
+    var categories = list.reduce(function(obj, l) {
       var prev = obj[l.category] || 0;
       obj[l.category] = prev + l.amount;
       return obj;
@@ -85,7 +82,7 @@ var statusAll = function statusAll(cb, errorHandler, opts) {
       var resp = budgets.map(function(x) {
         var cat = x.category;
         var amt = x.amount;
-        var total = totals[cat];
+        var total = categories[cat];
         var totalSpent = Math.abs(total) || 0;
         var isOver = (totalSpent > amt);
         var remainder = (amt - totalSpent);
@@ -100,7 +97,23 @@ var statusAll = function statusAll(cb, errorHandler, opts) {
         };
       });
 
-      cb(resp);
+      // build totals object
+      var budget = budgets.reduce(function(sum, b) {
+        return sum += b.amount;
+      }, 0);
+
+      var spent = list.reduce(function(sum, t) {
+        if (t.amount > 0) return sum;
+        return sum += t.amount;
+      }, 0);
+
+      var totals = {
+        budget: budget,
+        spent: spent,
+        remainder: (budget + spent)
+      };
+
+      cb(resp, totals);
     });
   });
 };
@@ -177,13 +190,16 @@ var put = function put(req, res, next) {
  */
 
 var render = function render(req, res, next) {
-  var year = req.params.year;
-  var month = req.params.month;
+  var year = req.params.year ? parseInt(req.params.year, 10) : moment().year();
+  var month = req.params.month ? parseInt(req.params.month, 10) - 1 : moment().month();
+  var date = moment().set({ year: year, month: month });
 
-  statusAll(function(budgets) {
+  statusAll(function(budgets, totals) {
     res.render('budgets', {
       viewName: 'budgets',
-      budgets: budgets
+      budgets: budgets,
+      totals: totals,
+      date: date.format('MMMM YYYY')
     });
   }, next, {
     year: year,

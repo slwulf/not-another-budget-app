@@ -1,0 +1,47 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    Budgets Summary
+  </div>
+  <div class="panel-body">
+    <p>
+      <strong>{{ date }}</strong>
+      {{#if category}}
+        | <strong>Category:</strong> {{ category }}
+      {{/if}}
+    </p>
+
+    <div class="row text-center">
+      <div class="col-xs-4">
+        <h5>Total Budget</h5>
+        <div class="h3">
+          <span class="label label-success">
+            {{ money totals.budget }}
+          </span>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <h5>Total Spent</h5>
+        <div class="h3">
+          <span class="label label-danger">
+            {{ money totals.spent }}
+          </span>
+        </div>
+      </div>
+      <div class="col-xs-4">
+        <h5>Total Remaining</h5>
+        <div class="h3">
+          {{#compare totals.remainder ">" 0}}
+            <span class="label label-success">
+          {{/compare}}
+          {{#compare totals.remainder "<" 0}}
+            <span class="label label-danger">
+          {{/compare}}
+          {{#compare totals.remainder "==" 0}}
+            <span class="label label-default">
+          {{/compare}}
+            {{ money totals.remainder }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
