@@ -199,7 +199,11 @@ var render = function render(req, res, next) {
       viewName: 'budgets',
       budgets: budgets,
       totals: totals,
-      date: date.format('MMMM YYYY')
+      date: date.format('MMMM YYYY'),
+      currentDate: {
+        month: date.format('MM'),
+        year: date.format('YYYY')
+      }
     });
   }, next, {
     year: year,

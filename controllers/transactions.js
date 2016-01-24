@@ -179,7 +179,12 @@ var render = function render(req, res, next) {
         expenses: totalOut
       },
       category: category || '',
-      date: date.format('MMMM YYYY')
+      categories: categories,
+      date: date.format('MMMM YYYY'),
+      currentDate: {
+        month: date.format('MM'),
+        year: date.format('YYYY')
+      }
     });
   });
 };

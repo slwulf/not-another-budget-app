@@ -167,6 +167,19 @@
     $budgets
       .on('input', '[contenteditable="true"]',
       debounce(editBudget, 500));
+
+    $('#set-date').on('submit', function(event) {
+      event.preventDefault();
+      var $event = $(event.target);
+      var $input = $event.find('[name="current-date"]');
+      var date = $input.val().trim();
+      var root = window.location.href.split(/date|cat/)[0];
+
+      if (~root.indexOf('budget')) root += '/';
+
+      if (date.length < 7) return window.location.href = root;
+      window.location.href = root + 'date/' + date;
+    });
   });
 
 })(jQuery);
