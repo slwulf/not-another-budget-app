@@ -111,6 +111,23 @@ var categories = function categories(cb, next) {
 };
 
 /**
+ * isCategory
+ *
+ * Given a category and an object,
+ * returns boolean of object.category
+ * and category. Curried.
+ *
+ * @param {String} category The category to check
+ * @param {Object} obj The object to check
+ */
+
+function isCategory(category) {
+  return function(obj) {
+    return category === obj.category;
+  };
+}
+
+/**
  * render
  *
  * Renders the view for transactions.
@@ -154,11 +171,7 @@ var render = function render(req, res, next) {
     }).reverse();
 
     // filter by category
-    if (category) {
-      sorted = sorted.filter(function(t) {
-        return category === t.category;
-      });
-    }
+    if (category) sorted = sorted.filter(isCategory(category));
 
     // get all unique categories
     var categories = list.map(function(t) {
@@ -168,18 +181,18 @@ var render = function render(req, res, next) {
     });
 
     // total all amounts
-    var total = list.reduce(function(sum, t) {
+    var total = sorted.reduce(function(sum, t) {
       return sum += t.amount;
     }, 0);
 
     // total income
-    var totalIn = list.reduce(function(sum, t) {
+    var totalIn = sorted.reduce(function(sum, t) {
       if (t.amount > 0) return sum += t.amount;
       return sum;
     }, 0);
 
     // total expenses
-    var totalOut = list.reduce(function(sum, t) {
+    var totalOut = sorted.reduce(function(sum, t) {
       if (t.amount < 0) return sum += t.amount;
       return sum;
     }, 0);
