@@ -167,6 +167,7 @@ var render = function render(req, res, next) {
     }, 0);
 
     res.render('index', {
+      viewName: 'transactions',
       transactions: sorted,
       totals: {
         all: total,

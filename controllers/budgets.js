@@ -166,7 +166,7 @@ var put = function put(req, res, next) {
 var render = function render(req, res, next) {
   statusAll(function(budgets) {
     res.render('budgets', {
-      cache: false,
+      viewName: 'budgets',
       budgets: budgets
     });
   }, next);

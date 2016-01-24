@@ -7,7 +7,7 @@ router.get('/cat/:category', transactions.render);
 router.get('/date/:year/:month', transactions.render);
 router.get('/date/:year/:month/:category', transactions.render);
 router.get('/import', function(req, res, next) {
-  res.render('import');
+  res.render('import', { viewName: 'import' });
 });
 
 module.exports = router;

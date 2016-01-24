@@ -13,9 +13,21 @@
 
     <nav class="collapse navbar-collapse" id="main-nav">
       <ul class="nav navbar-nav">
-        <li><a href="/">Transactions</a></li>
-        <li><a href="/budgets">Budgets</a></li>
-        <li><a href="/import">Import</a></li>
+        <li
+          {{#compare viewName '==' 'transactions'}}
+          class="active"
+          {{/compare}}
+        ><a href="/">Transactions</a></li>
+        <li
+          {{#compare viewName '==' 'budgets'}}
+          class="active"
+          {{/compare}}
+        ><a href="/budgets">Budgets</a></li>
+        <li
+          {{#compare viewName '==' 'import'}}
+          class="active"
+          {{/compare}}
+        ><a href="/import">Import</a></li>
       </ul>
     </nav>
 
