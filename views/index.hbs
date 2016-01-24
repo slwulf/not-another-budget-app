@@ -2,7 +2,12 @@
 
 {{> transactions/summary}}
 
-<h3>Transactions</h3>
+<h3>
+  Transactions
+  {{#if category}}
+  <small> :: {{ category }}</small>
+  {{/if}}
+</h3>
 <ul class="list-group">
 {{#each transactions}}
   {{> transactions/single}}

@@ -137,11 +137,11 @@ var render = function render(req, res, next) {
       .gte(dateMin.toDate())
       .lte(dateMax.toDate());
 
-  if (category) {
-    transactions = transactions
-      .where('category')
-      .equals(category);
-  }
+  // if (category) {
+  //   transactions = transactions
+  //     .where('category')
+  //     .equals(category);
+  // }
 
   transactions.exec(function(err, list) {
     if (err) next(err);
@@ -152,6 +152,20 @@ var render = function render(req, res, next) {
       if (a.date > b.date) return 1;
       return 0;
     }).reverse();
+
+    // filter by category
+    if (category) {
+      sorted = sorted.filter(function(t) {
+        return category === t.category;
+      });
+    }
+
+    // get all unique categories
+    var categories = list.map(function(t) {
+      return t.category;
+    }).filter(function(t, i, arr) {
+      return arr.indexOf(t) === i;
+    });
 
     // total all amounts
     var total = list.reduce(function(sum, t) {
