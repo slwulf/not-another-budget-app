@@ -1,5 +1,6 @@
 var db = require('mongoose');
 var numeral = require('numeral');
+var moment = require('moment');
 
 /**
  * status
@@ -49,9 +50,21 @@ var status = function status(req, res, next) {
  * including the status of each.
  */
 
-var statusAll = function statusAll(cb, errorHandler) {
+var statusAll = function statusAll(cb, errorHandler, opts) {
   var t = db.model('transactions').find();
   var b = db.model('budgets').find();
+
+  var today = moment();
+  var year = opts.year ? parseInt(opts.year, 10) : moment().year();
+  var month = opts.month ? parseInt(opts.month, 10) - 1 : moment().month();
+  var currentDate = moment().set({ year: year, month: month });
+  var dateMin = currentDate.clone().startOf('month');
+  var dateMax = currentDate.clone().endOf('month');
+
+  // filter transactions by date
+  t = t.where('date')
+    .gte(dateMin.toDate())
+    .lte(dateMax.toDate());
 
   // first, get transactions
   t.exec(function(err, list) {
@@ -164,12 +177,18 @@ var put = function put(req, res, next) {
  */
 
 var render = function render(req, res, next) {
+  var year = req.params.year;
+  var month = req.params.month;
+
   statusAll(function(budgets) {
     res.render('budgets', {
       viewName: 'budgets',
       budgets: budgets
     });
-  }, next);
+  }, next, {
+    year: year,
+    month: month
+  });
 };
 
 module.exports = {
