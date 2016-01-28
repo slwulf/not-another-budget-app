@@ -104,6 +104,35 @@
   }
 
   /**
+   * removeTransaction
+   *
+   * Handles click event emitting from
+   * .transaction-remove button.
+   *
+   * @param {Object} event An event payload
+   */
+
+  function removeTransaction(event) {
+    var $event = $(event.target);
+    var $transaction = $event.parents('.transaction');
+    var id = $transaction.data('id');
+
+    $.ajax({
+      method: 'DELETE',
+      url: '/api/transactions/delete/' + id,
+      success: function(data) {
+        console.log(data.message);
+        $transaction.slideUp(function() {
+          $(this).remove();
+        });
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  }
+
+  /**
    * updateBudget
    *
    * Given a budget object, send a
@@ -162,11 +191,13 @@
 
     $transactions
       .on('input', '[contenteditable="true"]',
-      debounce(editTransaction, 500));
+        debounce(editTransaction, 500))
+      .on('click', '.transaction-remove',
+        removeTransaction);
 
     $budgets
       .on('input', '[contenteditable="true"]',
-      debounce(editBudget, 500));
+        debounce(editBudget, 500));
 
     $('#set-date').on('submit', function(event) {
       event.preventDefault();
