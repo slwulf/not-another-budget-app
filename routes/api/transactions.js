@@ -40,6 +40,6 @@ router.put('/update', transactions.put);
  * DELETE
  */
 
-router.delete('/delete', transactions.remove);
+router.delete('/delete/:id', transactions.remove);
 
 module.exports = router;
