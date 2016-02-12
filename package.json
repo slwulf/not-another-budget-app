@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "DEBUG=myapp:* npm start"
+    "debug": "DEBUG=myapp:* npm start",
+    "watch": "nodemon ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
