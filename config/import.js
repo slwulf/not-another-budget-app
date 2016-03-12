@@ -13,7 +13,7 @@ module.exports = function importCSV(file, cb, next) {
     .map(function(line) { return line.split(',') })
 
     // parse into array of objects
-    .map(function(transactions, line) {
+    .map(function(line) {
       var debit = line[6];
       var credit = line[7];
       var amount = debit ? parseFloat(debit) * -1 : credit;
