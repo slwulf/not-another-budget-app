@@ -197,7 +197,14 @@ var render = function render(req, res, next) {
   statusAll(function(budgets, totals) {
     res.render('budgets', {
       viewName: 'budgets',
-      budgets: budgets,
+      budgets: budgets.sort(function(a, b) {
+        var x = a.category.toLowerCase();
+        var y = b.category.toLowerCase();
+
+        if (x < y) return -1;
+        if (x > y) return 1;
+        return 0;
+      }),
       totals: totals,
       date: date.format('MMMM YYYY'),
       currentDate: {
