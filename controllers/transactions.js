@@ -179,7 +179,7 @@ var render = function render(req, res, next) {
       return t.category;
     }).filter(function(t, i, arr) {
       return arr.indexOf(t) === i;
-    });
+    }).sort();
 
     // total all amounts
     var total = sorted.reduce(function(sum, t) {
