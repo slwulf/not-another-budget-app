@@ -204,12 +204,20 @@
       var $event = $(event.target);
       var $input = $event.find('[name="current-date"]');
       var date = $input.val().trim();
-      var root = window.location.href.split(/date|cat/)[0];
+      var root = window.location.origin;
 
-      if (~root.indexOf('budget')) root += '/';
+      if (~window.location.pathname.indexOf('budgets')) root += '/budgets';
 
       if (date.length < 7) return window.location.href = root;
-      window.location.href = root + 'date/' + date;
+      window.location.href = root + '/date/' + date;
+    });
+
+    $('.category-links').each(function() {
+      var $this = $(this);
+      var url = $this.attr('href');
+      var date = $('[name="current-date"]').val();
+
+      $this.attr('href', '/date/' + date + '/' + url);
     });
   });
 
