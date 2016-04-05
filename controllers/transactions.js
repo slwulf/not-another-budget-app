@@ -69,7 +69,7 @@ var put = function put(req, res, next) {
     if (err) next(err);
 
     if (description) tr.description = description.trim();
-    if (amount) tr.amount = parseFloat(amount.replace(/\$\,/g, ''));
+    if (amount) tr.amount = parseFloat(amount.replace(/\$|\,/g, ''));
     if (category) tr.category = category.trim();
     if (date) tr.date = new Date(date);
 
