@@ -172,7 +172,7 @@ var put = function put(req, res, next) {
   db.model('budgets').findById(id, function(err, b) {
     if (err) next(err);
 
-    if (amount) b.amount = parseFloat(amount.replace('$', ''));
+    if (amount) b.amount = parseFloat(amount.replace(/\$|\,/g, ''));
     if (category) b.category = category.trim();
 
     b.save(function(err) {
