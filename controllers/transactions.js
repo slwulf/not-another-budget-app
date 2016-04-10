@@ -90,7 +90,7 @@ var put = function put(req, res, next) {
 
 var remove = function remove(req, res, next) {
   db.model('transactions').findByIdAndRemove(req.params.id, function(err) {
-    if (err) next(err);
+    if (err) return next(err);
     res.send({ status: 200, message: 'Successfully removed transaction ' + req.params.id });
   });
 };
