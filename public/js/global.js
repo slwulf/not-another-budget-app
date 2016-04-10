@@ -1,6 +1,10 @@
 (function($) {
 
   /**
+   * HELPERS
+   */
+
+  /**
    * debounce
    *
    * Throttle the amount of times a given
@@ -45,6 +49,10 @@
     var year = date.getFullYear();
     return month + '/' + day + '/' + year;
   }
+
+  /**
+   * TRANSACTIONS
+   */
 
   /**
    * updateTransaction
@@ -133,6 +141,10 @@
   }
 
   /**
+   * BUDGETS
+   */
+
+  /**
    * updateBudget
    *
    * Given a budget object, send a
@@ -165,6 +177,33 @@
   }
 
   /**
+   * removeBudget
+   *
+   * Deletes a specific budget instance
+   * given an id.
+   *
+   * @param {String|Number} id ID of the budget to delete
+   */
+
+  function removeBudget(id) {
+    var $budget = $('.budget[data-id="' + id + '"]');
+
+    $.ajax({
+      method: 'DELETE',
+      url: '/api/budgets/delete/' + id,
+      success: function(data) {
+        console.log(data.message);
+        $budget.slideUp(function() {
+          $(this).remove();
+        });
+      },
+      error: function(err) {
+        console.log(err);
+      }
+    });
+  }
+
+  /**
    * editBudget
    *
    * Handles contenteditable input event
@@ -181,6 +220,10 @@
     var value = $event.text();
     var budget = { id: id };
     budget[key] = value;
+
+    if (key === 'category' && value.trim() === 'DELETE') {
+      return removeBudget(id);
+    }
 
     updateBudget(budget);
   }

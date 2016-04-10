@@ -10,4 +10,6 @@ router.post('/new', budgets.post);
 
 router.put('/update', budgets.put);
 
+router.delete('/delete/:id', budgets.remove);
+
 module.exports = router;

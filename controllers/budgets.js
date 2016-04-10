@@ -184,6 +184,20 @@ var put = function put(req, res, next) {
 };
 
 /**
+ * remove
+ *
+ * Deletes a specific budget given
+ * an id.
+ */
+
+var remove = function remove(req, res, next) {
+  db.model('budgets').findByIdAndRemove(req.params.id, function(err) {
+    if (err) return next(err);
+    res.send({ status: 200, message: 'Successfully removed budget ' + req.params.id });
+  });
+};
+
+/**
  * render
  *
  * Renders the view for budgets.
@@ -222,6 +236,7 @@ module.exports = {
   get: get,
   post: post,
   put: put,
+  remove: remove,
   status: status,
   render: render
 };
