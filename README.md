@@ -19,9 +19,33 @@ npm install
 npm run debug
 ```
 
-Once you've got it running, you can access the app in your browser at `localhost:3000`. The UI should be fairly straightforward. (Don't try to use the import function. It's currently set up to expect a CSV format that was defined by my credit card provider.)
+Once you've got it running, you can access the app in your browser at `localhost:3000`. Here's a few tips for working with the UI, since I designed it for myself:
+* You can edit any point of data (description, category, amount, etc.) by clicking on it and editing it in-line. This will save changes as you type. If you accidentally remove all of the text of an element and lock yourself out of editing it, you can refresh the page to get back without losing the original value.
+* Budget categories can be deleted by changing any of their values to `***`.
 
-You can add new transactions and budgets from their respective pages. Existing transactions and budgets can be edited in-line simply by clicking on the attribute you want to edit. All changes are synced to your local MongoDB.
+##### Importing Transactions
+
+The import tab in the interface allows you to import transactions from CSV. Paste the content of your CSV into the text area and click submit.
+
+You can use the import functionality by setting up [config/import-config.json](./config/import-config.json). Your CSV should have columns that correspond to the keys description, category, debit, credit, and date. (If your CSV has only one amount column, use the same index of debit and credit.)
+
+The column indexes are zero-indexed like arrays. For example, if your CSV looks like this...
+
+| Status | Date       | Card | Category | Message          | Debit   | Credit |
+| ------ | ---------- | ---- | -------- | ---------------- | ------- | ------ |
+| New    | 05/20/2016 | 1234 | Travel   | SWA FLIGHT 12345 | -200.00 | 0.00   |
+
+Status would be 0, date would be 1, and so on. So, your `import-config.json` would look like this:
+
+```javascript
+{
+  "description": 4,
+  "category": 3,
+  "debit": 5,
+  "credit": 6,
+  "date": 1
+}
+```
 
 ### Contributing
 
