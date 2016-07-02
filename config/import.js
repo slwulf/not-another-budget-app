@@ -1,8 +1,9 @@
 var fs = require('fs');
 var db = require('mongoose');
+var config = require('./import-config.json');
 
 module.exports = function importCSV(file, cb, next) {
-  var model = db.model('transactions');
+  var transactions = db.model('transactions');
 
   // clean and get array
   file.trim()
@@ -14,21 +15,21 @@ module.exports = function importCSV(file, cb, next) {
 
     // parse into array of objects
     .map(function(line) {
-      var debit = line[6];
-      var credit = line[7];
-      var amount = debit ? parseFloat(debit) * -1 : credit;
+      var debit = line[config.debit];
+      var credit = line[config.credit];
+      var amount = debit ? parseFloat(debit) * -1 : parseFloat(credit);
 
       return {
-        description: line[4],
-        category: line[5],
-        date: new Date(line[1]),
-        amount: parseFloat(amount)
+        description: line[config.description],
+        category: line[config.category],
+        date: new Date(line[config.date]),
+        amount: amount
       };
     })
 
-    // load models into db
-    .map(function(doc) {
-      model.create(doc, function(err) {
+    .forEach(function(doc) {
+      // create transactions
+      transactions.create(doc, function(err) {
         if (err) next(err);
       });
     });
