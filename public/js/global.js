@@ -221,11 +221,7 @@
     var budget = { id: id };
     budget[key] = value;
 
-    if (key === 'category' && value.trim() === 'DELETE') {
-      return removeBudget(id);
-    }
-
-    updateBudget(budget);
+    return value.trim() === '***' ? removeBudget(id) : updateBudget(budget);
   }
 
   $(document).ready(function() {

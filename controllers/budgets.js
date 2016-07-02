@@ -113,7 +113,16 @@ var statusAll = function statusAll(cb, errorHandler, opts) {
         remainder: (budget + spent)
       };
 
-      cb(resp, totals);
+      var existingBudgets = budgets.map(function(b) {
+        return b.category;
+      });
+
+      var neededBudgets = Object.keys(categories)
+        .filter(function(c) {
+          return existingBudgets.indexOf(c) === -1;
+        });
+
+      cb(resp, totals, neededBudgets);
     });
   });
 };
@@ -204,11 +213,12 @@ var remove = function remove(req, res, next) {
  */
 
 var render = function render(req, res, next) {
-  var year = req.params.year ? parseInt(req.params.year, 10) : moment().year();
-  var month = req.params.month ? parseInt(req.params.month, 10) - 1 : moment().month();
+  var now = moment();
+  var year = req.params.year ? parseInt(req.params.year, 10) : now.year();
+  var month = req.params.month ? parseInt(req.params.month, 10) - 1 : now.month();
   var date = moment().set({ year: year, month: month });
 
-  statusAll(function(budgets, totals) {
+  statusAll(function(budgets, totals, categories) {
     res.render('budgets', {
       viewName: 'budgets',
       budgets: budgets.sort(function(a, b) {
@@ -220,6 +230,7 @@ var render = function render(req, res, next) {
         return 0;
       }),
       totals: totals,
+      categories: categories.sort(),
       date: date.format('MMMM YYYY'),
       currentDate: {
         month: date.format('MM'),
