@@ -34,3 +34,6 @@ npm-debug.log
 
 # Data CSVs
 csv/
+
+# Actual import config
+config/import-config.json
