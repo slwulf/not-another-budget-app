@@ -19,6 +19,10 @@ module.exports = function importCSV(file, cb, next) {
       var credit = line[config.credit];
       var amount = debit ? parseFloat(debit) * -1 : parseFloat(credit);
 
+      if (debit === credit) {
+        amount = parseFloat(debit);
+      }
+
       return {
         description: line[config.description],
         category: line[config.category],
