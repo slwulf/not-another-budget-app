@@ -224,6 +224,28 @@
     return value.trim() === '***' ? removeBudget(id) : updateBudget(budget);
   }
 
+  /**
+   * numericalMask
+   *
+   * Only allows input that is a valid number.
+   * Ex: 12, 10.22, .94, -2.99
+   */
+
+  function numericalMask(event) {
+    var keyCode = event.keyCode;
+    var charCode = event.charCode;
+
+    var pos = event.target.selectionStart;
+    var char = String.fromCharCode(charCode);
+    var val = event.target.value;
+    var newVal = val.substr(0, pos) + char + val.substr(pos + 1);
+
+    var matchesPattern = /(^\-?\d*\.?\d*$)/.test(newVal);
+    var isAllowedKey = [8, 9, 13, 37, 38, 39, 40].indexOf(keyCode) > -1;
+
+    if (!isAllowedKey && !matchesPattern) event.preventDefault();
+  }
+
   $(document).ready(function() {
     var $transactions = $('.transaction');
     var $budgets = $('.budget');
@@ -258,6 +280,18 @@
 
       $this.attr('href', '/date/' + date + '/' + url);
     });
+
+    // set up input masks
+    inputMask.addIdentifier({ character: 'm', match: '[01]' });
+    inputMask.addIdentifier({ character: 'd', match: '[0-3]' });
+    inputMask.addIdentifier({ character: 'y', match: '[12]' });
+    inputMask.addIdentifier({ character: 'Y', match: '[09]' });
+
+    inputMask(document.querySelector('[name="current-date"]'), {
+      mask: 'yY##/m#', placeholder: 'YYYY/MM'
+    });
+
+    $('#amount').on('keypress', numericalMask);
   });
 
 })(jQuery);
