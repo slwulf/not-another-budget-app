@@ -17,9 +17,6 @@ var get = function get(req, res, next) {
   var month = req.params.month;
 
   if (category) t = t.where({ category: category });
-  // if (year) {
-  //   t = t.where({  });
-  // }
 
   t.exec(function(err, list) {
     if (err) next(err);
@@ -111,6 +108,28 @@ var categories = function categories(cb, next) {
   });
 };
 
+
+function categorySums(startDate, endDate) {
+  return new Promise(function(resolve, reject) {
+    db.model('transactions').aggregate([
+      { $match: {
+        date: { $gte: startDate, $lte: endDate }
+      }},
+      { $group: {
+        _id: {
+          category: '$category',
+          year: { $year: '$date' },
+          month: { $month: '$date' }
+        },
+        total: { $sum: '$amount' }
+      }}
+    ], function(err, results) {
+      if (err) reject(err);
+      else resolve(results);
+    });
+  });
+}
+
 /**
  * isCategory
  *
@@ -154,12 +173,6 @@ var render = function render(req, res, next) {
     .where('date')
       .gte(dateMin.toDate())
       .lte(dateMax.toDate());
-
-  // if (category) {
-  //   transactions = transactions
-  //     .where('category')
-  //     .equals(category);
-  // }
 
   transactions.exec(function(err, list) {
     if (err) next(err);
@@ -223,5 +236,6 @@ module.exports = {
   put: put,
   remove: remove,
   categories: categories,
+  totals: categorySums,
   render: render
 };
