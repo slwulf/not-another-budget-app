@@ -22,11 +22,11 @@ function getBudgets(category) {
   });
 }
 
-function createBudget(name = 'Default', amount = 0) {
+function createBudget(name, amount) {
   return new Promise(function(resolve, reject) {
     db.model('budgets').create({
-      amount: amount,
-      category: name
+      amount: amount || 0,
+      category: name || 'Default'
     }, function(err) {
       if (err) reject(err);
       else resolve(true);
@@ -42,6 +42,7 @@ function editBudget(budget) {
     db.model('budgets')
       .findById(budget.id, function(err, b) {
         if (err) return reject(err);
+
         if (amount) b.amount = parseFloat(amount.replace(/\$|\,/g, ''));
         if (category) b.category = category.trim();
 
@@ -67,7 +68,7 @@ function removeBudget(id) {
 function view(date) {
   var now = moment();
   var year = date.year ? parseInt(date.year, 10) : now.year();
-  var month = date.month ? parseInt(date.month, 10) : now.month();
+  var month = date.month ? parseInt(date.month, 10) - 1 : now.month();
   var displayDate = moment().set({ year, month });
   var dateMin = displayDate.clone().startOf('month');
   var dateMax = displayDate.clone().endOf('month');
