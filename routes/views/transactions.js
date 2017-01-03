@@ -8,6 +8,7 @@ router.get('/date/:year/:month', render);
 router.get('/date/:year/:month/:category', render);
 
 router.get('/categories', categories);
+router.get('/categories/:start_date/:end_date', categories);
 router.get('/import', function(req, res, next) {
   res.render('import', { viewName: 'import' });
 });
@@ -26,9 +27,10 @@ function render(req, res, next) {
 }
 
 function categories(req, res, next) {
-  var now = moment('2016-06-01');
-  var startDate = now.clone().startOf('month');
-  var endDate = now.clone().endOf('month');
+  var start = req.params.start_date || new Date();
+  var end = req.params.end_date || new Date();
+  var startDate = moment(start).startOf('month');
+  var endDate = moment(end).endOf('month');
 
   transactions.totals(startDate.toDate(), endDate.toDate())
     .then(function(totals) {
