@@ -1,0 +1,14 @@
+<h3>Categories</h3>
+
+<ul class="list-group">
+{{#categories totals}}
+  <li class="list-group-item row">
+    <div class="col-xs-6">
+      <span class="label label-primary">{{ category }}</span>
+    </div>
+    <div class="col-xs-6 text-right">
+      <strong>{{ money amount }}</strong>
+    </div>
+  </li>
+{{/categories}}
+</ul>
