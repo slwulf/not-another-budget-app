@@ -69,17 +69,18 @@ module.exports = hbs.create({
      */
 
     categories: function(object, options) {
-      var months = Object.keys(object);
+      var categories = Object.keys(object).sort();
 
-      return months.reduce(function(str, month) {
-        var categories = object[month];
-        str += '<h4>' + month + '</h4>';
+      return categories.reduce(function(str, category) {
+        var months = object[category].map(function(m) {
+          if (typeof m === 'string') {
+            return { date: m, amount: 0 }
+          }
 
-        categories.forEach(function(category) {
-          str += options.fn(category);
+          return m;
         });
 
-        return str;
+        return str += options.fn({ category, months });
       }, '');
     },
 

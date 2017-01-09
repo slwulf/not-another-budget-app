@@ -99,6 +99,17 @@ function categoryTotals(startDate, endDate) {
       return yearA - yearB || monthA - monthB;
     });
   }).then(function(results) {
+    var months = results.reduce(function(ms, m) {
+      var id = m._id;
+      var year = id.year;
+      var month = id.month < 10 ? '0' + id.month : id.month;
+      var date = moment(year + '-' + month).format('MMM YYYY');
+
+      if (ms.indexOf(date) === -1) ms.push(date);
+
+      return ms;
+    }, []);
+
     return results.reduce(function(totals, t) {
       var id = t._id;
       var category = id.category;
@@ -106,14 +117,13 @@ function categoryTotals(startDate, endDate) {
       var year = id.year;
       var month = id.month < 10 ? '0' + id.month : id.month;
       var date = moment(year + '-' + month).format('MMM YYYY');
+      var index = months.indexOf(date);
 
-      totals[date] = totals[date] || [];
-      totals[date].push({
-        category: category,
+      totals[category] = totals[category] || months.slice();
+      totals[category][index] = {
+        date: date,
         amount: Math.abs(amount)
-      });
-
-      totals[date].sort((a, b) => a.category.localeCompare(b.category));
+      };
 
       return totals;
     }, {});

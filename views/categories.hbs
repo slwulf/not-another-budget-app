@@ -2,13 +2,17 @@
 
 <ul class="list-group">
 {{#categories totals}}
-  <li class="list-group-item row">
+  <li class="list-group-item row row-flex">
     <div class="col-xs-6">
-      <span class="label label-primary">{{ category }}</span>
+      <h4>{{ category }}</h4>
     </div>
-    <div class="col-xs-6 text-right">
-      <strong>{{ money amount }}</strong>
-    </div>
+
+    {{#each months}}
+      <div class="col text-right">
+        <span class="label label-default">{{ date }}</span><br />
+        <strong class="small">{{ money amount }}</strong>
+      </div>
+    {{/each}}
   </li>
 {{/categories}}
 </ul>
