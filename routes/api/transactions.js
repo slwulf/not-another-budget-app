@@ -2,44 +2,63 @@ var express = require('express');
 var router = express.Router();
 var transactions = require('../../controllers/transactions');
 var importCSV = require('../../config/import');
+var moment = require('moment');
 
-/**
- * GET
- */
+router.get('/', get);
+router.get('/:category', get);
+router.post('/new', post);
+router.put('/update', put);
+router.delete('/delete/:id', remove);
 
-// static
-router.get('/', transactions.get);
-router.get('/categories', function(req, res, next) {
-  transactions.categories(res.send, next);
-});
+router.get('/totals/:start_date/:end_date', getTotals);
+router.post('/import', importTransactions);
 
-// variable
-router.get('/:category', transactions.get);
-router.get('/:year/:month', transactions.get);
-router.get('/:year/:month/:category', transactions.get);
+module.exports = router;
 
-/**
- * POST
- */
+function get(req, res, next) {
+  transactions.get(req.params.category)
+    .then(function(results) {
+      res.send(results);
+    }).catch(next);
+}
 
-router.post('/new', transactions.post);
-router.post('/import', function(req, res, next) {
+function post(req, res, next) {
+  transactions.create(req.body)
+    .then(function() {
+      res.redirect('/');
+    }).catch(next);
+}
+
+function put(req, res, next) {
+  transactions.edit(req.body)
+    .then(function(transaction) {
+      res.send(transaction);
+    }).catch(next);
+}
+
+function remove(req, res, next) {
+  var id = req.params.id
+  transactions.remove(id)
+    .then(function() {
+      res.send({
+        status: 200,
+        message: 'Successfully removed transaction' + id
+      });
+    }).catch(next);
+}
+
+function getTotals(req, res, next) {
+  var startDate = moment(req.params.start_date).toDate();
+  var endDate = moment(req.params.end_date).toDate();
+
+  transactions.totals(startDate, endDate)
+    .then(res.send)
+    .catch(next);
+}
+
+function importTransactions(req, res, next) {
   var csv = req.body.csv;
   importCSV(csv, function() {
     res.redirect('/');
   }, next);
-});
-
-/**
- * PUT
- */
-
-router.put('/update', transactions.put);
-
-/**
- * DELETE
- */
-
-router.delete('/delete/:id', transactions.remove);
-
-module.exports = router;
+}

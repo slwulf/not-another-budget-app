@@ -29,18 +29,14 @@ module.exports = hbs.create({
     },
 
     /**
-     * {{#each}}{{/each}}
+     * {{#each items}}{{/each}}
      * Loop through an array in context
      */
 
-    each: function(context, options) {
-      var ret = "";
-
-      for (var i=0, j=context.length; i<j; i++) {
-        ret = ret + options.fn(context[i]);
-      }
-
-      return ret;
+    each: function(items, options) {
+      return items.reduce(function(str, item) {
+        return str += options.fn(item);
+      }, '');
     },
 
     /**
@@ -68,6 +64,27 @@ module.exports = hbs.create({
     },
 
     /**
+     * {{#categories object}}{{/categories}}
+     * Renders the categories view.
+     */
+
+    categories: function(object, options) {
+      var categories = Object.keys(object).sort();
+
+      return categories.reduce(function(str, category) {
+        var months = object[category].map(function(m) {
+          if (typeof m === 'string') {
+            return { date: m, amount: 0 }
+          }
+
+          return m;
+        });
+
+        return str += options.fn({ category, months });
+      }, '');
+    },
+
+    /**
      * {{#compare lvalue operator rvalue}}{{/compare}}
      * Compares lvalue with rvalue given an operator
      */
@@ -76,7 +93,7 @@ module.exports = hbs.create({
       var operators, result;
 
       if (arguments.length < 3) {
-        throw new Error('Handelbars Helper \'compare\' needs 2 parameters');
+        throw new Error('Handlebars Helper \'compare\' needs 2 parameters');
       }
 
       if (options === undefined) {
@@ -98,7 +115,7 @@ module.exports = hbs.create({
       };
 
       if (!operators[operator]) {
-        throw new Error('Handelbars Helper \'compare\' doesn\'t know the operator ' + operator);
+        throw new Error('Handlebars Helper \'compare\' doesn\'t know the operator ' + operator);
       }
 
       result = operators[operator](lvalue, rvalue);

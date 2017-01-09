@@ -1,3 +1,12 @@
 [data-toggle] {
   cursor: pointer;
 }
+
+.row-flex {
+  display: flex;
+  justify-content: flex-end;
+
+  .col {
+    flex-grow: 1;
+  }
+}

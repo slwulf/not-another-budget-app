@@ -1,3 +1,1 @@
-[data-toggle] {
-  cursor: pointer;
-}
+[data-toggle]{cursor:pointer}.row-flex{display:flex;justify-content:flex-end}.row-flex .col{flex-grow:1}

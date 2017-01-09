@@ -2,125 +2,133 @@ var db = require('mongoose');
 var numeral = require('numeral');
 var moment = require('moment');
 
-/**
- * get
- *
- * Returns a list of all transactions
- * optionally filtering by category
- * or date.
- */
-
-var get = function get(req, res, next) {
-  var t = db.model('transactions').find();
-  var category = req.params.category;
-  var year = req.params.year;
-  var month = req.params.month;
-
-  if (category) t = t.where({ category: category });
-  // if (year) {
-  //   t = t.where({  });
-  // }
-
-  t.exec(function(err, list) {
-    if (err) next(err);
-    res.send(list);
-  });
+module.exports = {
+  get: getTransactions,
+  create: createTransaction,
+  edit: editTransaction,
+  remove: removeTransaction,
+  totals: categoryTotals,
+  view: view
 };
 
-/**
- * post
- *
- * Creates a new transaction given
- * some data.
- */
+function getTransactions(category) {
+  return new Promise(function(resolve, reject) {
+    var transactions = db.model('transactions').find();
+    if (category) transactions = transactions.where({category});
 
-var post = function post(req, res, next) {
-  var description = req.body.description || 'Transaction';
-  var amount = req.body.amount || 0;
-  var category = req.body.category || 'Default';
-  var date = req.body.date || new Date();
-
-  db.model('transactions').create({
-    description: description,
-    amount: amount,
-    category: category,
-    date: date
-  }, function(err) {
-    if (err) next(err);
-    res.redirect('/');
-  });
-};
-
-/**
- * put
- *
- * Updates a specific transaction
- * given some data and an id.
- */
-
-var put = function put(req, res, next) {
-  var id = req.body.id;
-  var description = req.body.description;
-  var amount = req.body.amount;
-  var category = req.body.category;
-  var date = req.body.date;
-
-  db.model('transactions').findById(id, function(err, tr) {
-    if (err) next(err);
-
-    if (description) tr.description = description.trim();
-    if (amount) tr.amount = parseFloat(amount.replace(/\$|\,/g, ''));
-    if (category) tr.category = category.trim();
-    if (date) tr.date = new Date(date);
-
-    tr.save(function(err) {
-      if (err) next(err);
-      tr.amount = numeral(tr.amount).format('$0,0.00');
-      res.send(tr);
+    transactions.exec(function(err, list) {
+      if (err) reject(err);
+      else resolve(list);
     });
   });
-};
+}
 
-/**
- * remove
- *
- * Deletes a specific transaction
- * given an id.
- */
-
-var remove = function remove(req, res, next) {
-  db.model('transactions').findByIdAndRemove(req.params.id, function(err) {
-    if (err) return next(err);
-    res.send({ status: 200, message: 'Successfully removed transaction ' + req.params.id });
+function createTransaction(data) {
+  return new Promise(function(resolve, reject) {
+    db.model('transactions').create({
+      description: data.description || 'Transaction',
+      amount: data.amount || 0,
+      category: data.category || 'Default',
+      date: data.date || new Date()
+    }, function(err) {
+      if (err) reject(err);
+      else resolve(true);
+    });
   });
-};
+}
 
-/**
- * categories
- *
- * Returns a list of all distinct
- * categories of transactions.
- */
+function editTransaction(data) {
+  var description = data.description;
+  var amount = data.amount;
+  var category = data.category;
+  var date = data.date;
 
-var categories = function categories(cb, next) {
-  var t = db.model('transactions').find();
-  t.distinct('category');
-  t.exec(function(err, list) {
-    if (err) next(err);
-    cb(list);
+  return new Promise(function(resolve, reject) {
+    db.model('transactions').findById(data.id,
+      function(err, t) {
+        if (err) return reject(err);
+
+        if (description) t.description = description.trim();
+        if (amount) t.amount = parseFloat(amount.replace(/\$|\,/g, ''));
+        if (category) t.category = category.trim();
+        if (date) t.date = new Date(date);
+
+        t.save(function(err) {
+          if (err) return reject(err);
+          t.amount = numeral(t.amount).format('$0,0.00');
+          resolve(t);
+        });
+      });
   });
-};
+}
 
-/**
- * isCategory
- *
- * Given a category and an object,
- * returns boolean of object.category
- * and category. Curried.
- *
- * @param {String} category The category to check
- * @param {Object} obj The object to check
- */
+function removeTransaction(id) {
+  return new Promise(function(resolve, reject) {
+    db.model('transactions')
+      .findByIdAndRemove(id, function(err) {
+        if (err) reject(err);
+        else resolve(true);
+      });
+  });
+}
+
+function categoryTotals(startDate, endDate) {
+  return new Promise(function(resolve, reject) {
+    db.model('transactions').aggregate([
+      { $match: {
+        date: { $gte: startDate, $lte: endDate }
+      }},
+      { $group: {
+        _id: {
+          category: '$category',
+          year: { $year: '$date' },
+          month: { $month: '$date' }
+        },
+        total: { $sum: '$amount' }
+      }}
+    ], function(err, results) {
+      if (err) reject(err);
+      else resolve(results);
+    });
+  }).then(function(results) {
+    return results.sort(function(a, b) {
+      var yearA = a._id.year;
+      var yearB = b._id.year;
+      var monthA = a._id.month;
+      var monthB = b._id.month;
+      return yearA - yearB || monthA - monthB;
+    });
+  }).then(function(results) {
+    var months = results.reduce(function(ms, m) {
+      var id = m._id;
+      var year = id.year;
+      var month = id.month < 10 ? '0' + id.month : id.month;
+      var date = moment(year + '-' + month).format('MMM YYYY');
+
+      if (ms.indexOf(date) === -1) ms.push(date);
+
+      return ms;
+    }, []);
+
+    return results.reduce(function(totals, t) {
+      var id = t._id;
+      var category = id.category;
+      var amount = parseFloat(t.total.toFixed(2));
+      var year = id.year;
+      var month = id.month < 10 ? '0' + id.month : id.month;
+      var date = moment(year + '-' + month).format('MMM YYYY');
+      var index = months.indexOf(date);
+
+      totals[category] = totals[category] || months.slice();
+      totals[category][index] = {
+        date: date,
+        amount: Math.abs(amount)
+      };
+
+      return totals;
+    }, {});
+  });
+}
 
 function isCategory(category) {
   return function(obj) {
@@ -128,100 +136,52 @@ function isCategory(category) {
   };
 }
 
-/**
- * render
- *
- * Renders the view for transactions.
- * By default, renders transactions for current month.
- * Can also render by category and/or year + month.
- */
+function view(date, category) {
+  var year = parseInt(date.year, 10);
+  var month = parseInt(date.month, 10) - 1;
+  var queryDate = month && year ? moment().set({year, month}) : moment();
+  var dateMin = queryDate.clone().startOf('month');
+  var dateMax = queryDate.clone().endOf('month');
 
-var render = function render(req, res, next) {
-  var category = req.params.category;
-  var year = req.params.year;
-  var month = req.params.month;
-  var currentDate = {
-    year: parseInt(year, 10),
-    month: parseInt(month, 10) - 1
-  };
+  return new Promise(function(resolve, reject) {
+    db.model('transactions').find({
+      date: { $gte: dateMin.toDate(), $lte: dateMax.toDate() }
+    }).exec(function(err, list) {
+      if (err) return reject(err);
 
-  var date = month && year ? moment().set(currentDate) : moment();
-  var dateMin = date.clone().startOf('month');
-  var dateMax = date.clone().endOf('month');
+      var transactions = list.sort(function(a, b) {
+        if (a.date < b.date) return -1;
+        if (a.date > b.date) return 1;
+        return 0;
+      }).reverse().filter(function(transaction) {
+        if (category) return isCategory(category)(transaction);
+        return true;
+      });
 
-  var transactions = db.model('transactions')
-    .find()
-    .where('date')
-      .gte(dateMin.toDate())
-      .lte(dateMax.toDate());
+      var categories = list.map(t => t.category)
+        .filter((t, i, arr) => arr.indexOf(t) === i)
+        .sort();
 
-  // if (category) {
-  //   transactions = transactions
-  //     .where('category')
-  //     .equals(category);
-  // }
+      var total = transactions.reduce((s, t) => s += t.amount, 0);
+      var totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0);
+      var totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0);
 
-  transactions.exec(function(err, list) {
-    if (err) next(err);
-
-    // sort by date
-    var sorted = list.sort(function(a, b) {
-      if (a.date < b.date) return -1;
-      if (a.date > b.date) return 1;
-      return 0;
-    }).reverse();
-
-    // filter by category
-    if (category) sorted = sorted.filter(isCategory(category));
-
-    // get all unique categories
-    var categories = list.map(function(t) {
-      return t.category;
-    }).filter(function(t, i, arr) {
-      return arr.indexOf(t) === i;
-    }).sort();
-
-    // total all amounts
-    var total = sorted.reduce(function(sum, t) {
-      return sum += t.amount;
-    }, 0);
-
-    // total income
-    var totalIn = sorted.reduce(function(sum, t) {
-      if (t.amount > 0) return sum += t.amount;
-      return sum;
-    }, 0);
-
-    // total expenses
-    var totalOut = sorted.reduce(function(sum, t) {
-      if (t.amount < 0) return sum += t.amount;
-      return sum;
-    }, 0);
-
-    res.render('index', {
-      viewName: 'transactions',
-      transactions: sorted,
-      totals: {
-        all: total,
-        income: totalIn,
-        expenses: totalOut
-      },
-      category: category || '',
-      categories: categories,
-      date: date.format('MMMM YYYY'),
-      currentDate: {
-        month: date.format('MM'),
-        year: date.format('YYYY')
-      }
+      resolve({
+        viewName: 'transactions',
+        transactions: transactions,
+        totals: {
+          all: total,
+          income: totalIn,
+          expenses: totalOut
+        },
+        category: category || '',
+        categories: categories,
+        date: queryDate.format('MMMM YYYY'),
+        currentDate: {
+          month: queryDate.format('MM'),
+          year: queryDate.format('YYYY')
+        }
+      });
     });
   });
-};
-
-module.exports = {
-  get: get,
-  post: post,
-  put: put,
-  remove: remove,
-  categories: categories,
-  render: render
-};
+}

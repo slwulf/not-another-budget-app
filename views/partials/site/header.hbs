@@ -19,6 +19,11 @@
           {{/compare}}
         ><a href="/">Transactions</a></li>
         <li
+          {{#compare viewName '==' 'categories'}}
+          class="active"
+          {{/compare}}
+        ><a href="/categories">Categories</a></li>
+        <li
           {{#compare viewName '==' 'budgets'}}
           class="active"
           {{/compare}}
@@ -29,6 +34,7 @@
           {{/compare}}
         ><a href="/import">Import</a></li>
       </ul>
+      {{#compare viewName '!=' 'categories'}}
       {{#compare viewName '!=' 'import'}}
       <form id="set-date" class="navbar-form navbar-left">
         <div class="form-group">
@@ -38,6 +44,7 @@
           </div>
         </div>
       </form>
+      {{/compare}}
       {{/compare}}
       {{#compare viewName '==' 'transactions'}}
       <ul class="nav navbar-nav navbar-left">
