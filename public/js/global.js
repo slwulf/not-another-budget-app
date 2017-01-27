@@ -260,10 +260,15 @@
       .on('input', '[contenteditable="true"]',
         debounce(editBudget, 500));
 
-    $('#set-date').on('submit', function(event) {
-      event.preventDefault();
-      var $event = $(event.target);
-      var $input = $event.find('[name="current-date"]');
+    $('[name="current-date"]').datepicker({
+      immediateUpdates: true,
+      format: 'yyyy/mm',
+      startView: 'year',
+      autoclose: true,
+      endDate: '0d',
+      minViewMode: 'months'
+    }).on('changeDate', function(event) {
+      var $input = $(event.target);
       var date = $input.val().trim();
       var root = window.location.origin;
 
@@ -273,22 +278,29 @@
       window.location.href = root + '/date/' + date;
     });
 
+    $('.categories-dates').datepicker({
+      immediateUpdates: true,
+      format: 'yyyy/mm',
+      startView: 'year',
+      autoclose: true,
+      endDate: '0d',
+      minViewMode: 'months'
+    }).on('changeDate', function(event) {
+      var $start = $('[name="start_date"]');
+      var $end = $('[name="end_date"]');
+      var startDate = $start.val().replace('/', '-');
+      var endDate = $end.val().replace('/', '-');
+
+      window.location.href = window.location.origin +
+        '/categories/' + startDate + '/' + endDate;
+    });
+
     $('.category-links').each(function() {
       var $this = $(this);
       var url = $this.attr('href');
       var date = $('[name="current-date"]').val();
 
       $this.attr('href', '/date/' + date + '/' + url);
-    });
-
-    // set up input masks
-    inputMask.addIdentifier({ character: 'm', match: '[01]' });
-    inputMask.addIdentifier({ character: 'd', match: '[0-3]' });
-    inputMask.addIdentifier({ character: 'y', match: '[12]' });
-    inputMask.addIdentifier({ character: 'Y', match: '[09]' });
-
-    inputMask(document.querySelector('[name="current-date"]'), {
-      mask: 'yY##/m#', placeholder: 'YYYY/MM'
     });
 
     $('#amount').on('keypress', numericalMask);

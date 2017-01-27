@@ -36,7 +36,9 @@ function categories(req, res, next) {
     .then(function(totals) {
       res.render('categories', {
         viewName: 'categories',
-        totals: totals
+        totals: totals,
+        startDate: startDate.format('YYYY/MM'),
+        endDate: endDate.format('YYYY/MM')
       });
     }).catch(next);
 }
