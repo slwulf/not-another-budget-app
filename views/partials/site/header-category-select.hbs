@@ -1,0 +1,17 @@
+{{#compare viewName '==' 'transactions'}}
+<ul class="nav navbar-nav navbar-left">
+  <li class="dropdown navbar-right">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+      {{#compare category '==' ''}}Category{{/compare}}
+      {{ category }} <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {{#each categories}}
+      <li>
+        <a class="category-links" href="{{ this }}">{{ this }}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </li>
+</ul>
+{{/compare}}

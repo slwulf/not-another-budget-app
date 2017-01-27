@@ -1,0 +1,12 @@
+{{#compare viewName '!=' 'categories'}}
+{{#compare viewName '!=' 'import'}}
+<form id="set-date" class="navbar-form navbar-left">
+  <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon" id="date-label">Date</span>
+      <input type="text" name="current-date" class="form-control" aria-describedby="date-label" value="{{ currentDate.year }}/{{ currentDate.month }}">
+    </div>
+  </div>
+</form>
+{{/compare}}
+{{/compare}}

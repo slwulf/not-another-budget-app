@@ -34,51 +34,9 @@
           {{/compare}}
         ><a href="/import">Import</a></li>
       </ul>
-      {{#compare viewName '!=' 'categories'}}
-      {{#compare viewName '!=' 'import'}}
-      <form id="set-date" class="navbar-form navbar-left">
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon" id="date-label">Date</span>
-            <input type="text" name="current-date" class="form-control" aria-describedby="date-label" value="{{ currentDate.year }}/{{ currentDate.month }}">
-          </div>
-        </div>
-      </form>
-      {{/compare}}
-      {{/compare}}
-      {{#compare viewName '==' 'categories'}}
-      <form id="set-date" class="navbar-form navbar-left">
-        <div class="form-group">
-          <div class="input-group input-daterange">
-            <span class="input-group-addon" id="date-label">Date</span>
-            <input type="text" name="start_date"
-              class="form-control categories-dates"
-              value="{{ startDate }}">
-            <span class="input-group-addon">to</span>
-            <input type="text" name="end_date"
-              class="form-control categories-dates"
-              value="{{ endDate }}">
-          </div>
-        </div>
-      </form>
-      {{/compare}}
-      {{#compare viewName '==' 'transactions'}}
-      <ul class="nav navbar-nav navbar-left">
-        <li class="dropdown navbar-right">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            {{#compare category '==' ''}}Category{{/compare}}
-            {{ category }} <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {{#each categories}}
-            <li>
-              <a class="category-links" href="{{ this }}">{{ this }}</a>
-            </li>
-            {{/each}}
-          </ul>
-        </li>
-      </ul>
-      {{/compare}}
+      {{> site/header-date-single}}
+      {{> site/header-date-range}}
+      {{> site/header-category-select}}
     </nav>
 
   </div>
