@@ -139,7 +139,7 @@ function isCategory(category) {
 function view(date, category) {
   var year = parseInt(date.year, 10);
   var month = parseInt(date.month, 10) - 1;
-  var queryDate = month && year ? moment().set({year, month}) : moment();
+  var queryDate = date.month && date.year ? moment().set({year, month}) : moment();
   var dateMin = queryDate.clone().startOf('month');
   var dateMax = queryDate.clone().endOf('month');
 
