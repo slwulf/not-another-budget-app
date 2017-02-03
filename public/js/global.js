@@ -271,11 +271,16 @@
       var $input = $(event.target);
       var date = $input.val().trim();
       var root = window.location.origin;
+      var path = window.location.pathname;
+      var pathParts = path.split('/');
+      var category = pathParts[pathParts.length - 1];
+      var hasCategory = category !== 'budgets' && isNaN(parseInt(category, 10));
 
-      if (~window.location.pathname.indexOf('budgets')) root += '/budgets';
+      var budgetsPath = ~path.indexOf('budgets') ? '/budgets' : '';
+      var datePath = '/date/' + date;
+      var categoryPath = hasCategory ? '/' + category : '';
 
-      if (date.length < 7) return window.location.href = root;
-      window.location.href = root + '/date/' + date;
+      window.location.href = root + budgetsPath + datePath + categoryPath;
     });
 
     $('.categories-dates').datepicker({
