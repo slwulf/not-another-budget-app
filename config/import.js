@@ -2,42 +2,43 @@ var fs = require('fs');
 var db = require('mongoose');
 var config = require('./import-config.json');
 
-module.exports = function importCSV(file, cb, next) {
+module.exports = function importData(separator, data) {
   var transactions = db.model('transactions');
+  var sep = separator === 'comma' ? ',' : '\t';
 
-  // clean and get array
-  file.trim()
-    .replace(/\"/g, '')
-    .split('\n')
+  return new Promise(function(resolve, reject) {
+    // clean and get array
+    data.trim()
+      .replace(/\"/g, '')
+      .split('\n')
 
-    // split lines into arrays
-    .map(function(line) { return line.split(',') })
+      // split lines into arrays
+      .map(function(line) { return line.split(sep) })
 
-    // parse into array of objects
-    .map(function(line) {
-      var debit = line[config.debit];
-      var credit = line[config.credit];
-      var amount = debit ? parseFloat(debit) * -1 : parseFloat(credit);
+      // parse into array of objects
+      .map(function(line) {
+        var debit = line[config.debit];
+        var credit = line[config.credit];
+        var amount = debit ? parseFloat(debit) * -1 : parseFloat(credit);
 
-      if (debit === credit) {
-        amount = parseFloat(debit);
-      }
+        if (debit === credit) {
+          amount = parseFloat(debit);
+        }
 
-      return {
-        description: line[config.description],
-        category: line[config.category],
-        date: new Date(line[config.date]),
-        amount: amount
-      };
-    })
+        return {
+          description: line[config.description],
+          category: line[config.category],
+          date: new Date(line[config.date]),
+          amount: amount
+        };
+      })
 
-    .forEach(function(doc) {
-      // create transactions
-      transactions.create(doc, function(err) {
-        if (err) next(err);
+      .forEach(function(doc) {
+        transactions.create(doc, function(err) {
+          if (err) reject(err);
+        });
       });
-    });
 
-  // res.send
-  if (cb) cb({ status: 201, message: 'Import successful.' });
+    resolve({ status: 201, message: 'Import successful.' });
+  });
 }

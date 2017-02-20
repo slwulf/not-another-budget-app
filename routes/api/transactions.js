@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var transactions = require('../../controllers/transactions');
-var importCSV = require('../../config/import');
+var importData = require('../../config/import');
 var moment = require('moment');
 
 router.get('/', get);
@@ -57,8 +57,12 @@ function getTotals(req, res, next) {
 }
 
 function importTransactions(req, res, next) {
-  var csv = req.body.csv;
-  importCSV(csv, function() {
-    res.redirect('/');
-  }, next);
+  var separator = req.body.separator;
+  var data = req.body.data;
+
+  importData(separator, data)
+    .catch(next)
+    .then(function() {
+      res.redirect('/');
+    });
 }

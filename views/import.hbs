@@ -1,12 +1,20 @@
-<h3>Import</h3>
+<h3>Import Transactions</h3>
 
 <div class="panel panel-default">
   <form action="/api/transactions/import" method="POST" class="panel-body">
     <div class="form-group">
-      <label for="csv">Import CSV</label>
-      <textarea class="form-control" name="csv" id="csv" rows="20"></textarea>
+      <label class="radio-inline">
+        <input type="radio" name="separator" value="comma"> Comma-Separated
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="separator" value="tab"> Tab-Separated
+      </label>
     </div>
 
-    <button type="submit" class="btn btn-primary">Import Transactions</button>
+    <div class="form-group">
+      <textarea class="form-control" name="data" rows="20"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Import</button>
   </form>
 </div>
