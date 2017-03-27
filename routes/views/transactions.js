@@ -29,7 +29,7 @@ function render(req, res, next) {
 function categories(req, res, next) {
   var start = req.params.start_date || new Date();
   var end = req.params.end_date || new Date();
-  var startDate = moment(start).startOf('month');
+  var startDate = moment(start).subtract(1, 'months').startOf('month');
   var endDate = moment(end).endOf('month');
 
   transactions.totals(startDate.toDate(), endDate.toDate())
