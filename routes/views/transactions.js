@@ -32,7 +32,7 @@ function categories(req, res, next) {
   var startDate = moment(start).startOf('month');
   var endDate = moment(end).endOf('month');
 
-  if (!req.params.start_date) startDate = startDate.minus(1, 'months')
+  if (!req.params.start_date) startDate = startDate.subtract(1, 'months')
 
   transactions.totals(startDate.toDate(), endDate.toDate())
     .then(function(totals) {
