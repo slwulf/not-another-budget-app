@@ -55,6 +55,7 @@ var importCSV = require('./config/import');
 // importCSV(fs.readFileSync('./csv/transactions.csv', 'utf-8'));
 
 // db
-db.connect('mongodb://localhost/nab-app');
+db.Promise = global.Promise;
+db.connect('mongodb://localhost/nab-app', { useMongoClient: true });
 
 module.exports = app;
