@@ -1,6 +1,6 @@
-var db = require('mongoose');
-var numeral = require('numeral');
-var moment = require('moment');
+var db = require('mongoose')
+var numeral = require('numeral')
+var moment = require('moment')
 
 module.exports = {
   get: getTransactions,
@@ -9,18 +9,18 @@ module.exports = {
   remove: removeTransaction,
   totals: categoryTotals,
   view: view
-};
+}
 
 function getTransactions(category) {
   return new Promise(function(resolve, reject) {
-    var transactions = db.model('transactions').find();
-    if (category) transactions = transactions.where({category});
+    var transactions = db.model('transactions').find()
+    if (category) transactions = transactions.where({category})
 
     transactions.exec(function(err, list) {
-      if (err) reject(err);
-      else resolve(list);
-    });
-  });
+      if (err) reject(err)
+      else resolve(list)
+    })
+  })
 }
 
 function createTransaction(data) {
@@ -31,45 +31,45 @@ function createTransaction(data) {
       category: data.category || 'Default',
       date: data.date || new Date()
     }, function(err) {
-      if (err) reject(err);
-      else resolve(true);
-    });
-  });
+      if (err) reject(err)
+      else resolve(true)
+    })
+  })
 }
 
 function editTransaction(data) {
-  var description = data.description;
-  var amount = data.amount;
-  var category = data.category;
-  var date = data.date;
+  var description = data.description
+  var amount = data.amount
+  var category = data.category
+  var date = data.date
 
   return new Promise(function(resolve, reject) {
     db.model('transactions').findById(data.id,
       function(err, t) {
-        if (err) return reject(err);
+        if (err) return reject(err)
 
-        if (description) t.description = description.trim();
-        if (amount) t.amount = parseFloat(amount.replace(/\$|\,/g, ''));
-        if (category) t.category = category.trim();
-        if (date) t.date = new Date(date);
+        if (description) t.description = description.trim()
+        if (amount) t.amount = parseFloat(amount.replace(/\$|\,/g, ''))
+        if (category) t.category = category.trim()
+        if (date) t.date = new Date(date)
 
         t.save(function(err) {
-          if (err) return reject(err);
-          t.amount = numeral(t.amount).format('$0,0.00');
-          resolve(t);
-        });
-      });
-  });
+          if (err) return reject(err)
+          t.amount = numeral(t.amount).format('$0,0.00')
+          resolve(t)
+        })
+      })
+  })
 }
 
 function removeTransaction(id) {
   return new Promise(function(resolve, reject) {
     db.model('transactions')
       .findByIdAndRemove(id, function(err) {
-        if (err) reject(err);
-        else resolve(true);
-      });
-  });
+        if (err) reject(err)
+        else resolve(true)
+      })
+  })
 }
 
 function categoryTotals(startDate, endDate) {
@@ -87,84 +87,84 @@ function categoryTotals(startDate, endDate) {
         total: { $sum: '$amount' }
       }}
     ], function(err, results) {
-      if (err) reject(err);
-      else resolve(results);
-    });
+      if (err) reject(err)
+      else resolve(results)
+    })
   }).then(function(results) {
     return results.sort(function(a, b) {
-      var yearA = a._id.year;
-      var yearB = b._id.year;
-      var monthA = a._id.month;
-      var monthB = b._id.month;
-      return yearA - yearB || monthA - monthB;
-    });
+      var yearA = a._id.year
+      var yearB = b._id.year
+      var monthA = a._id.month
+      var monthB = b._id.month
+      return yearA - yearB || monthA - monthB
+    })
   }).then(function(results) {
     var months = results.reduce(function(ms, m) {
-      var id = m._id;
-      var year = id.year;
-      var month = id.month < 10 ? '0' + id.month : id.month;
-      var date = moment(year + '-' + month).format('MMM YYYY');
+      var id = m._id
+      var year = id.year
+      var month = id.month < 10 ? '0' + id.month : id.month
+      var date = moment(year + '-' + month).format('MMM YYYY')
 
-      if (ms.indexOf(date) === -1) ms.push(date);
+      if (ms.indexOf(date) === -1) ms.push(date)
 
-      return ms;
-    }, []);
+      return ms
+    }, [])
 
     return results.reduce(function(totals, t) {
-      var id = t._id;
-      var category = id.category;
-      var amount = parseFloat(t.total.toFixed(2));
-      var year = id.year;
-      var month = id.month < 10 ? '0' + id.month : id.month;
-      var date = moment(year + '-' + month).format('MMM YYYY');
-      var index = months.indexOf(date);
+      var id = t._id
+      var category = id.category
+      var amount = parseFloat(t.total.toFixed(2))
+      var year = id.year
+      var month = id.month < 10 ? '0' + id.month : id.month
+      var date = moment(year + '-' + month).format('MMM YYYY')
+      var index = months.indexOf(date)
 
-      totals[category] = totals[category] || months.slice();
+      totals[category] = totals[category] || months.slice()
       totals[category][index] = {
         date: date,
         amount: Math.abs(amount)
-      };
+      }
 
-      return totals;
-    }, {});
-  });
+      return totals
+    }, {})
+  })
 }
 
 function isCategory(category) {
   return function(obj) {
-    return category === obj.category;
-  };
+    return category === obj.category
+  }
 }
 
 function view(date, category) {
-  var year = parseInt(date.year, 10);
-  var month = parseInt(date.month, 10) - 1;
-  var queryDate = date.month && date.year ? moment().set({year, month}) : moment();
-  var dateMin = queryDate.clone().startOf('month');
-  var dateMax = queryDate.clone().endOf('month');
+  var year = parseInt(date.year, 10)
+  var month = parseInt(date.month, 10) - 1
+  var queryDate = date.month && date.year ? moment().set({year, month}) : moment()
+  var dateMin = queryDate.clone().startOf('month')
+  var dateMax = queryDate.clone().endOf('month')
 
   return new Promise(function(resolve, reject) {
     db.model('transactions').find({
       date: { $gte: dateMin.toDate(), $lte: dateMax.toDate() }
     }).exec(function(err, list) {
-      if (err) return reject(err);
+      if (err) return reject(err)
 
       var transactions = list.sort(function(a, b) {
-        if (a.date < b.date) return -1;
-        if (a.date > b.date) return 1;
-        return 0;
+        if (a.date < b.date) return -1
+        if (a.date > b.date) return 1
+        return 0
       }).reverse().filter(function(transaction) {
-        if (category) return isCategory(category)(transaction);
-        return true;
-      });
+        if (category) return isCategory(category)(transaction)
+        return true
+      })
 
       var categories = list.map(t => t.category)
         .filter((t, i, arr) => arr.indexOf(t) === i)
-        .sort();
+        .sort()
 
-      var total = transactions.reduce((s, t) => s += t.amount, 0);
-      var totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0);
-      var totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0);
+      var total = transactions.reduce((s, t) => s += t.amount, 0)
+      var totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0)
+      var totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0)
 
       resolve({
         viewName: 'transactions',
@@ -181,7 +181,7 @@ function view(date, category) {
           month: queryDate.format('MM'),
           year: queryDate.format('YYYY')
         }
-      });
-    });
-  });
+      })
+    })
+  })
 }

@@ -1,5 +1,5 @@
-var hbs = require('express-handlebars');
-var numeral = require('numeral');
+var hbs = require('express-handlebars')
+var numeral = require('numeral')
 
 module.exports = hbs.create({
 
@@ -25,7 +25,7 @@ module.exports = hbs.create({
      */
 
     raw: function(data) {
-      return data.fn(this);
+      return data.fn(this)
     },
 
     /**
@@ -35,8 +35,8 @@ module.exports = hbs.create({
 
     each: function(items, options) {
       return items.reduce(function(str, item) {
-        return str += options.fn(item);
-      }, '');
+        return str += options.fn(item)
+      }, '')
     },
 
     /**
@@ -46,8 +46,8 @@ module.exports = hbs.create({
      */
 
     money: function(number) {
-      if (typeof number !== 'number') return number;
-      return numeral(number).format('$0,0.00');
+      if (typeof number !== 'number') return number
+      return numeral(number).format('$0,0.00')
     },
 
     /**
@@ -57,10 +57,10 @@ module.exports = hbs.create({
      */
 
     parseDate: function(date) {
-      var month = date.getMonth() + 1;
-      var day = date.getDate();
-      var year = date.getFullYear();
-      return month + '/' + day + '/' + year;
+      var month = date.getMonth() + 1
+      var day = date.getDate()
+      var year = date.getFullYear()
+      return month + '/' + day + '/' + year
     },
 
     /**
@@ -69,7 +69,7 @@ module.exports = hbs.create({
      */
 
     categories: function(object, options) {
-      var categories = Object.keys(object).sort();
+      var categories = Object.keys(object).sort()
 
       return categories.reduce(function(str, category) {
         var months = object[category].map(function(m) {
@@ -77,11 +77,11 @@ module.exports = hbs.create({
             return { date: m, amount: 0 }
           }
 
-          return m;
-        });
+          return m
+        })
 
-        return str += options.fn({ category, months });
-      }, '');
+        return str += options.fn({ category, months })
+      }, '')
     },
 
     /**
@@ -90,43 +90,43 @@ module.exports = hbs.create({
      */
 
     compare: function(lvalue, operator, rvalue, options) {
-      var operators, result;
+      var operators, result
 
       if (arguments.length < 3) {
-        throw new Error('Handlebars Helper \'compare\' needs 2 parameters');
+        throw new Error('Handlebars Helper \'compare\' needs 2 parameters')
       }
 
       if (options === undefined) {
-        options = rvalue;
-        rvalue = operator;
-        operator = '===';
+        options = rvalue
+        rvalue = operator
+        operator = '==='
       }
 
       operators = {
-        '==': function(l, r) { return l == r; },
-        '===': function(l, r) { return l === r; },
-        '!=': function(l, r) { return l != r; },
-        '!==': function(l, r) { return l !== r; },
-        '<': function(l, r) { return l < r; },
-        '>': function(l, r) { return l > r; },
-        '<=': function(l, r) { return l <= r; },
-        '>=': function(l, r) { return l >= r; },
-        'typeof': function(l, r) { return typeof l == r; }
-      };
-
-      if (!operators[operator]) {
-        throw new Error('Handlebars Helper \'compare\' doesn\'t know the operator ' + operator);
+        '==': function(l, r) { return l == r },
+        '===': function(l, r) { return l === r },
+        '!=': function(l, r) { return l != r },
+        '!==': function(l, r) { return l !== r },
+        '<': function(l, r) { return l < r },
+        '>': function(l, r) { return l > r },
+        '<=': function(l, r) { return l <= r },
+        '>=': function(l, r) { return l >= r },
+        'typeof': function(l, r) { return typeof l == r }
       }
 
-      result = operators[operator](lvalue, rvalue);
+      if (!operators[operator]) {
+        throw new Error('Handlebars Helper \'compare\' doesn\'t know the operator ' + operator)
+      }
+
+      result = operators[operator](lvalue, rvalue)
 
       if (result) {
-        return options.fn(this);
+        return options.fn(this)
       } else {
-        return options.inverse(this);
+        return options.inverse(this)
       }
     }
 
   }
 
-});
+})

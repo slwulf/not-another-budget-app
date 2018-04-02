@@ -1,10 +1,10 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
-var transactions = require('./transactions');
-var budgets = require('./budgets');
+var transactions = require('./transactions')
+var budgets = require('./budgets')
 
-router.use('/transactions', transactions);
-router.use('/budgets', budgets);
+router.use('/transactions', transactions)
+router.use('/budgets', budgets)
 
-module.exports = router;
+module.exports = router

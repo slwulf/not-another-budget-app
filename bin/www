@@ -4,23 +4,23 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('not-another-budget-app:server');
-var http = require('http');
-var errorHandler = require('express-error-handler');
+var app = require('../app')
+var debug = require('debug')('not-another-budget-app:server')
+var http = require('http')
+var errorHandler = require('express-error-handler')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var port = normalizePort(process.env.PORT || '3000')
+app.set('port', port)
 
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = http.createServer(app)
 
 /**
  * Error handling.
@@ -28,38 +28,38 @@ var server = http.createServer(app);
 
 // log it
 app.use(function(err, req, res, next) {
-  console.log(err);
-  next(err);
-});
+  console.log(err)
+  next(err)
+})
 
 // graceful handling
-app.use(errorHandler({ server: server }));
+app.use(errorHandler({ server: server }))
 
 /**
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
-server.on('listening', onListening);
+server.listen(port)
+server.on('listening', onListening)
 
 /**
  * Normalize a port into a number, string, or false.
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+  var port = parseInt(val, 10)
 
   if (isNaN(port)) {
     // named pipe
-    return val;
+    return val
   }
 
   if (port >= 0) {
     // port number
-    return port;
+    return port
   }
 
-  return false;
+  return false
 }
 
 /**
@@ -67,9 +67,9 @@ function normalizePort(val) {
  */
 
 function onListening() {
-  var addr = server.address();
+  var addr = server.address()
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+    : 'port ' + addr.port
+  debug('Listening on ' + bind)
 }
