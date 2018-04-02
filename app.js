@@ -56,6 +56,6 @@ var importCSV = require('./config/import');
 
 // db
 db.Promise = global.Promise;
-db.connect('mongodb://localhost/nab-app', { useMongoClient: true });
+db.connect('mongodb://localhost/nab-app');
 
 module.exports = app;
