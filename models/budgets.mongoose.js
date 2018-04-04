@@ -3,17 +3,17 @@
  */
 
 // deps
-var db = require('mongoose')
-var Schema = db.Schema
+const db = require('mongoose')
+const Schema = db.Schema
 
 // create schema
-var budgetsSchema = new Schema({
+const budgetsSchema = new Schema({
   category: String,
   amount: Number
 })
 
 // register model with schema
-var B = db.model('budgets', budgetsSchema)
+const B = db.model('budgets', budgetsSchema)
 
 // create a few
 // [

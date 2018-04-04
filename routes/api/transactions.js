@@ -1,8 +1,8 @@
-var express = require('express')
-var router = express.Router()
-var transactions = require('../../controllers/transactions')
-var importData = require('../../config/import')
-var moment = require('moment')
+const express = require('express')
+const router = express.Router()
+const transactions = require('../../controllers/transactions')
+const importData = require('../../config/import')
+const moment = require('moment')
 
 router.get('/', get)
 router.get('/:category', get)
@@ -37,7 +37,7 @@ function put(req, res, next) {
 }
 
 function remove(req, res, next) {
-  var id = req.params.id
+  const id = req.params.id
   transactions.remove(id)
     .then(function() {
       res.send({
@@ -48,8 +48,8 @@ function remove(req, res, next) {
 }
 
 function getTotals(req, res, next) {
-  var startDate = moment(req.params.start_date).toDate()
-  var endDate = moment(req.params.end_date).toDate()
+  const startDate = moment(req.params.start_date).toDate()
+  const endDate = moment(req.params.end_date).toDate()
 
   transactions.totals(startDate, endDate)
     .then(res.send)
@@ -57,8 +57,8 @@ function getTotals(req, res, next) {
 }
 
 function importTransactions(req, res, next) {
-  var separator = req.body.separator
-  var data = req.body.data
+  const separator = req.body.separator
+  const data = req.body.data
 
   importData(separator, data)
     .catch(next)

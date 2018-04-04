@@ -3,11 +3,11 @@
  */
 
 // deps
-var db = require('mongoose')
-var Schema = db.Schema
+const db = require('mongoose')
+const Schema = db.Schema
 
 // create schema
-var transactionsSchema = new Schema({
+const transactionsSchema = new Schema({
   description: String,
   amount: Number,
   category: String,

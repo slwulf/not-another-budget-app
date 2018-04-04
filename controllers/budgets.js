@@ -1,6 +1,6 @@
-var db = require('mongoose')
-var numeral = require('numeral')
-var moment = require('moment')
+const mongoose = require('mongoose')
+const numeral = require('numeral')
+const moment = require('moment')
 
 module.exports = {
   get: getBudgets,
@@ -12,7 +12,7 @@ module.exports = {
 
 function getBudgets(category) {
   return new Promise(function(resolve, reject) {
-    var budgets = db.model('budgets').find()
+    const budgets = mongoose.model('budgets').find()
     if (category) budgets = budgets.where({category})
 
     budgets.exec(function(err, results) {
@@ -24,7 +24,7 @@ function getBudgets(category) {
 
 function createBudget(name, amount) {
   return new Promise(function(resolve, reject) {
-    db.model('budgets').create({
+    mongoose.model('budgets').create({
       amount: amount || 0,
       category: name || 'Default'
     }, function(err) {
@@ -35,11 +35,11 @@ function createBudget(name, amount) {
 }
 
 function editBudget(budget) {
-  var amount = budget.amount
-  var category = budget.category
+  const amount = budget.amount
+  const category = budget.category
 
   return new Promise(function(resolve, reject) {
-    db.model('budgets')
+    mongoose.model('budgets')
       .findById(budget.id, function(err, b) {
         if (err) return reject(err)
 
@@ -57,7 +57,7 @@ function editBudget(budget) {
 
 function removeBudget(id) {
   return new Promise(function(resolve, reject) {
-    db.model('budgets')
+    mongoose.model('budgets')
       .findByIdAndRemove(id, function(err) {
         if (err) reject(err)
         else resolve(true)
@@ -66,23 +66,23 @@ function removeBudget(id) {
 }
 
 function view(date) {
-  var now = moment()
-  var year = date.year ? parseInt(date.year, 10) : now.year()
-  var month = date.month ? parseInt(date.month, 10) - 1 : now.month()
-  var displayDate = moment().set({ year, month })
-  var dateMin = displayDate.clone().startOf('month')
-  var dateMax = displayDate.clone().endOf('month')
+  const now = moment()
+  const year = date.year ? parseInt(date.year, 10) : now.year()
+  const month = date.month ? parseInt(date.month, 10) - 1 : now.month()
+  const displayDate = moment().set({ year, month })
+  const dateMin = displayDate.clone().startOf('month')
+  const dateMax = displayDate.clone().endOf('month')
 
   return new Promise(function(resolve, reject) {
-    var budgets = db.model('budgets').find()
-    var transactions = db.model('transactions').find({
+    const budgets = mongoose.model('budgets').find()
+    const transactions = mongoose.model('transactions').find({
       date: { $gte: dateMin.toDate(), $lte: dateMax.toDate() }
     })
 
     transactions.exec(function(err, ts) {
       if (err) return reject(err)
 
-      var categoryTotals = ts.reduce(function(o, t) {
+      const categoryTotals = ts.reduce(function(o, t) {
         o[t.category] = o[t.category] || 0
         o[t.category] += t.amount
         return o
@@ -91,8 +91,8 @@ function view(date) {
       budgets.exec(function(err, bs) {
         if (err) return reject(err)
 
-        var viewBudgets = bs.map(function(b) {
-          var total = Math.abs(categoryTotals[b.category]) || 0
+        const viewBudgets = bs.map(function(b) {
+          const total = Math.abs(categoryTotals[b.category]) || 0
           return {
             _id: b._id,
             category: b.category,
@@ -102,24 +102,24 @@ function view(date) {
             isOver: (total > b.amount)
           }
         }).sort((a, b) => {
-          var catA = a.category.toLowerCase()
-          var catB = b.category.toLowerCase()
+          const catA = a.category.toLowerCase()
+          const catB = b.category.toLowerCase()
           if (catA < catB) return -1
           if (catA > catB) return 1
           return 0
         })
 
-        var totalBudget = bs.reduce((sum, b) => sum += b.amount, 0)
-        var totalSpent = ts.reduce((sum, t) => t.amount > 0 ? sum : sum += t.amount, 0)
+        const totalBudget = bs.reduce((sum, b) => sum += b.amount, 0)
+        const totalSpent = ts.reduce((sum, t) => t.amount > 0 ? sum : sum += t.amount, 0)
 
-        var viewTotals = {
+        const viewTotals = {
           budget: totalBudget,
           spent: totalSpent,
           remainder: (totalBudget + totalSpent)
         }
 
-        var existingBudgets = bs.map(b => b.category)
-        var neededBudgets = Object.keys(categoryTotals)
+        const existingBudgets = bs.map(b => b.category)
+        const neededBudgets = Object.keys(categoryTotals)
           .filter(c => existingBudgets.indexOf(c) === -1)
           .sort()
 

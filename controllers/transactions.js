@@ -1,6 +1,6 @@
-var db = require('mongoose')
-var numeral = require('numeral')
-var moment = require('moment')
+const db = require('mongoose')
+const numeral = require('numeral')
+const moment = require('moment')
 
 module.exports = {
   get: getTransactions,
@@ -13,7 +13,7 @@ module.exports = {
 
 function getTransactions(category) {
   return new Promise(function(resolve, reject) {
-    var transactions = db.model('transactions').find()
+    const transactions = db.model('transactions').find()
     if (category) transactions = transactions.where({category})
 
     transactions.exec(function(err, list) {
@@ -38,10 +38,10 @@ function createTransaction(data) {
 }
 
 function editTransaction(data) {
-  var description = data.description
-  var amount = data.amount
-  var category = data.category
-  var date = data.date
+  const description = data.description
+  const amount = data.amount
+  const category = data.category
+  const date = data.date
 
   return new Promise(function(resolve, reject) {
     db.model('transactions').findById(data.id,
@@ -92,18 +92,18 @@ function categoryTotals(startDate, endDate) {
     })
   }).then(function(results) {
     return results.sort(function(a, b) {
-      var yearA = a._id.year
-      var yearB = b._id.year
-      var monthA = a._id.month
-      var monthB = b._id.month
+      const yearA = a._id.year
+      const yearB = b._id.year
+      const monthA = a._id.month
+      const monthB = b._id.month
       return yearA - yearB || monthA - monthB
     })
   }).then(function(results) {
-    var months = results.reduce(function(ms, m) {
-      var id = m._id
-      var year = id.year
-      var month = id.month < 10 ? '0' + id.month : id.month
-      var date = moment(year + '-' + month).format('MMM YYYY')
+    const months = results.reduce(function(ms, m) {
+      const id = m._id
+      const year = id.year
+      const month = id.month < 10 ? '0' + id.month : id.month
+      const date = moment(year + '-' + month).format('MMM YYYY')
 
       if (ms.indexOf(date) === -1) ms.push(date)
 
@@ -111,13 +111,13 @@ function categoryTotals(startDate, endDate) {
     }, [])
 
     return results.reduce(function(totals, t) {
-      var id = t._id
-      var category = id.category
-      var amount = parseFloat(t.total.toFixed(2))
-      var year = id.year
-      var month = id.month < 10 ? '0' + id.month : id.month
-      var date = moment(year + '-' + month).format('MMM YYYY')
-      var index = months.indexOf(date)
+      const id = t._id
+      const category = id.category
+      const amount = parseFloat(t.total.toFixed(2))
+      const year = id.year
+      const month = id.month < 10 ? '0' + id.month : id.month
+      const date = moment(year + '-' + month).format('MMM YYYY')
+      const index = months.indexOf(date)
 
       totals[category] = totals[category] || months.slice()
       totals[category][index] = {
@@ -137,11 +137,11 @@ function isCategory(category) {
 }
 
 function view(date, category) {
-  var year = parseInt(date.year, 10)
-  var month = parseInt(date.month, 10) - 1
-  var queryDate = date.month && date.year ? moment().set({year, month}) : moment()
-  var dateMin = queryDate.clone().startOf('month')
-  var dateMax = queryDate.clone().endOf('month')
+  const year = parseInt(date.year, 10)
+  const month = parseInt(date.month, 10) - 1
+  const queryDate = date.month && date.year ? moment().set({year, month}) : moment()
+  const dateMin = queryDate.clone().startOf('month')
+  const dateMax = queryDate.clone().endOf('month')
 
   return new Promise(function(resolve, reject) {
     db.model('transactions').find({
@@ -149,7 +149,7 @@ function view(date, category) {
     }).exec(function(err, list) {
       if (err) return reject(err)
 
-      var transactions = list.sort(function(a, b) {
+      const transactions = list.sort(function(a, b) {
         if (a.date < b.date) return -1
         if (a.date > b.date) return 1
         return 0
@@ -158,13 +158,13 @@ function view(date, category) {
         return true
       })
 
-      var categories = list.map(t => t.category)
+      const categories = list.map(t => t.category)
         .filter((t, i, arr) => arr.indexOf(t) === i)
         .sort()
 
-      var total = transactions.reduce((s, t) => s += t.amount, 0)
-      var totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0)
-      var totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0)
+      const total = transactions.reduce((s, t) => s += t.amount, 0)
+      const totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0)
+      const totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0)
 
       resolve({
         viewName: 'transactions',

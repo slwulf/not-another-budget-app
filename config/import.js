@@ -1,11 +1,11 @@
-var fs = require('fs')
-var db = require('mongoose')
-var moment = require('moment')
-var config = require('./import-config.json')
+const fs = require('fs')
+const db = require('mongoose')
+const moment = require('moment')
+const config = require('./import-config.json')
 
 module.exports = function importData(separator, data) {
-  var transactions = db.model('transactions')
-  var sep = separator === 'comma' ? ',' : '\t'
+  const transactions = db.model('transactions')
+  const sep = separator === 'comma' ? ',' : '\t'
 
   return new Promise(function(resolve, reject) {
     // clean and get array
@@ -18,10 +18,10 @@ module.exports = function importData(separator, data) {
 
       // parse into array of objects
       .map(function(line) {
-        var parsedDate = moment(line[config.date], 'MM/DD/YYYY')
-        var debit = line[config.debit]
-        var credit = line[config.credit]
-        var amount = debit ? parseFloat(debit) * -1 : parseFloat(credit)
+        const parsedDate = moment(line[config.date], 'MM/DD/YYYY')
+        const debit = line[config.debit]
+        const credit = line[config.credit]
+        const amount = debit ? parseFloat(debit) * -1 : parseFloat(credit)
 
         if (debit === credit) {
           amount = parseFloat(debit)

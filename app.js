@@ -1,14 +1,14 @@
-var express = require('express')
-var fs = require('fs')
-var path = require('path')
-var favicon = require('serve-favicon')
-var logger = require('morgan')
-var cookieParser = require('cookie-parser')
-var bodyParser = require('body-parser')
-var mongoose = require('mongoose')
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
+const favicon = require('serve-favicon')
+const logger = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
 
 // app
-var app = express()
+const app = express()
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.png')))
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -24,11 +24,11 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')))
 
 // routes
-var routes = require('./routes/index')
+const routes = require('./routes/index')
 app.use('/', routes)
 
 // views
-var hbs = require('./config/handlebars')
+const hbs = require('./config/handlebars')
 app.set('views', path.join(__dirname, 'views'))
 app.engine('.hbs', hbs.engine)
 app.set('view engine', '.hbs')

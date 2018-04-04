@@ -1,5 +1,5 @@
-var hbs = require('express-handlebars')
-var numeral = require('numeral')
+const hbs = require('express-handlebars')
+const numeral = require('numeral')
 
 module.exports = hbs.create({
 
@@ -57,9 +57,9 @@ module.exports = hbs.create({
      */
 
     parseDate: function(date) {
-      var month = date.getMonth() + 1
-      var day = date.getDate()
-      var year = date.getFullYear()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      const year = date.getFullYear()
       return month + '/' + day + '/' + year
     },
 
@@ -69,10 +69,10 @@ module.exports = hbs.create({
      */
 
     categories: function(object, options) {
-      var categories = Object.keys(object).sort()
+      const categories = Object.keys(object).sort()
 
       return categories.reduce(function(str, category) {
-        var months = object[category].map(function(m) {
+        const months = object[category].map(function(m) {
           if (typeof m === 'string') {
             return { date: m, amount: 0 }
           }
@@ -90,7 +90,7 @@ module.exports = hbs.create({
      */
 
     compare: function(lvalue, operator, rvalue, options) {
-      var operators, result
+      const operators, result
 
       if (arguments.length < 3) {
         throw new Error('Handlebars Helper \'compare\' needs 2 parameters')

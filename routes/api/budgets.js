@@ -1,6 +1,6 @@
-var express = require('express')
-var router = express.Router()
-var budgets = require('../../controllers/budgets')
+const express = require('express')
+const router = express.Router()
+const budgets = require('../../controllers/budgets')
 
 router.get('/', get)
 router.get('/:category', get)
@@ -18,8 +18,8 @@ function get(req, res, next) {
 }
 
 function post(req, res, next) {
-  var name = req.body.name
-  var amount = req.body.amount
+  const name = req.body.name
+  const amount = req.body.amount
 
   budgets.create(name, amount)
     .then(function() {
@@ -28,9 +28,9 @@ function post(req, res, next) {
 }
 
 function put(req, res, next) {
-  var id = req.body.id
-  var amount = req.body.amount
-  var category = req.body.category
+  const id = req.body.id
+  const amount = req.body.amount
+  const category = req.body.category
 
   budgets.edit({id, amount, category})
     .then(function(budget) {
@@ -39,7 +39,7 @@ function put(req, res, next) {
 }
 
 function remove(req, res, next) {
-  var id = req.params.id
+  const id = req.params.id
 
   budgets.remove(id)
     .then(function() {
