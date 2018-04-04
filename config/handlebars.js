@@ -90,7 +90,7 @@ module.exports = hbs.create({
      */
 
     compare: function(lvalue, operator, rvalue, options) {
-      const operators, result
+      var operators, result
 
       if (arguments.length < 3) {
         throw new Error('Handlebars Helper \'compare\' needs 2 parameters')
