@@ -54,7 +54,7 @@ function removeBudget(id) {
   })
 }
 
-function view(date) {
+function oldView(date) {
   const now = moment()
   const year = date.year ? parseInt(date.year, 10) : now.year()
   const month = date.month ? parseInt(date.month, 10) - 1 : now.month()
@@ -126,4 +126,44 @@ function view(date) {
       })
     })
   })
+}
+
+async function view({month = moment().month(), year = moment().year()}) {
+  const date = moment().set({year, month})
+  const budgetRecords = await Budget.findAll()
+  const budgets = budgetRecords
+    .map(record => record.dataValues)
+    .map(budget => ({
+      _id: budget.id, // TODO: remove underscore
+      category: budget.category,
+      amount: budget.amount,
+      totalSpent: 0, // TODO: calculate total from transactions
+      remainder: 0, // TODO: budget.amount - total
+      isOver: false // TODO: remainder < 0
+    }))
+    .sort((a, b) => {
+      const catA = a.category.toLowerCase()
+      const catB = b.category.toLowerCase()
+      if (catA < catB) return -1
+      if (catA > catB) return 1
+      return 0
+    })
+
+  const totals = {
+    budget: 0,
+    spent: 0,
+    remainder: 0
+  }
+
+  return {
+    viewName: 'budgets',
+    budgets,
+    totals,
+    categories: [],
+    date: date.format('MMMM YYYY'),
+    currentDate: {
+      month: date.format('MM'),
+      year: date.format('YYYY')
+    }
+  }
 }
