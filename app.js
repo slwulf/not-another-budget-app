@@ -45,10 +45,13 @@ app.engine('.hbs', hbs.engine)
 app.set('view engine', '.hbs')
 
 // models
-fs.readdirSync(__dirname + '/models')
-.map(function(fn) {
-  if (~fn.indexOf('.js')) require('./models/' + fn)
-})
+require('./models').sequelize.sync()
+
+// mongoose models
+// fs.readdirSync(__dirname + '/models')
+// .map(function(fn) {
+//   if (~fn.indexOf('.mongoose.js')) require('./models/' + fn)
+// })
 
 // import
 var importCSV = require('./config/import')
