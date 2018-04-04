@@ -1,10 +1,3 @@
-/**
- * Not Another Budget App
- * 0.0.0
- *
- */
-
-// deps
 var express = require('express')
 var fs = require('fs')
 var path = require('path')
@@ -12,11 +5,7 @@ var favicon = require('serve-favicon')
 var logger = require('morgan')
 var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
-var db = require('mongoose')
-
-/**
- * init
- */
+var mongoose = require('mongoose')
 
 // app
 var app = express()
@@ -47,18 +36,11 @@ app.set('view engine', '.hbs')
 // models
 require('./models').sequelize.sync()
 
-// mongoose models
-// fs.readdirSync(__dirname + '/models')
-// .map(function(fn) {
-//   if (~fn.indexOf('.mongoose.js')) require('./models/' + fn)
-// })
+// mongoose setup
+fs.readdirSync(__dirname + '/models')
+  .map(f => ~f.indexOf('.mongoose.js') && require(`./models/${f}`))
 
-// import
-var importCSV = require('./config/import')
-// importCSV(fs.readFileSync('./csv/transactions.csv', 'utf-8'))
-
-// db
-db.Promise = global.Promise
-db.connect('mongodb://localhost/nab-app')
+mongoose.Promise = global.Promise
+mongoose.connect('mongodb://localhost/nab-app')
 
 module.exports = app
