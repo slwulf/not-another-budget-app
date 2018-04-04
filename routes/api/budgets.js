@@ -18,10 +18,9 @@ function get(req, res, next) {
 }
 
 function post(req, res, next) {
-  const name = req.body.name
-  const amount = req.body.amount
+  const {category, amount} = req.body
 
-  budgets.create(name, amount)
+  budgets.create(category, amount)
     .then(function() {
       res.redirect('/budgets')
     }).catch(next)

@@ -1,3 +1,4 @@
+const {Budget} = require('../models')
 const mongoose = require('mongoose')
 const numeral = require('numeral')
 const moment = require('moment')
@@ -11,27 +12,15 @@ module.exports = {
 }
 
 function getBudgets(category) {
-  return new Promise(function(resolve, reject) {
-    const budgets = mongoose.model('budgets').find()
-    if (category) budgets = budgets.where({category})
-
-    budgets.exec(function(err, results) {
-      if (err) reject(err)
-      else resolve(results)
-    })
-  })
+  return Budget
+    .findAll({ where: {category} })
+    .then((records = []) => records.map(r => r.dataValues))
 }
 
-function createBudget(name, amount) {
-  return new Promise(function(resolve, reject) {
-    mongoose.model('budgets').create({
-      amount: amount || 0,
-      category: name || 'Default'
-    }, function(err) {
-      if (err) reject(err)
-      else resolve(true)
-    })
-  })
+function createBudget(category, amount) {
+  return Budget
+    .create({category, amount})
+    .then(record => record.dataValues)
 }
 
 function editBudget(budget) {
