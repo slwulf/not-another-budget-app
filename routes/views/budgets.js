@@ -12,7 +12,6 @@ function render(req, res, next) {
   const month = req.params.month
 
   budgets.view({year, month})
-    .then(function(view) {
-      res.render('budgets', view)
-    }).catch(next)
+    .then(view => res.render('budgets', view))
+    .catch(next)
 }

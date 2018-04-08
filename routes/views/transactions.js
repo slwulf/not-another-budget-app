@@ -21,9 +21,8 @@ function render(req, res, next) {
   const category = req.params.category
 
   transactions.view({year, month}, category)
-    .then(function(view) {
-      res.render('index', view)
-    }).catch(next)
+    .then(view => res.render('index', view))
+    .catch(next)
 }
 
 function categories(req, res, next) {
@@ -35,12 +34,11 @@ function categories(req, res, next) {
   if (!req.params.start_date) startDate = startDate.subtract(1, 'months')
 
   transactions.totals(startDate.toDate(), endDate.toDate())
-    .then(function(totals) {
-      res.render('categories', {
-        viewName: 'categories',
-        totals: totals,
-        startDate: startDate.format('YYYY/MM'),
-        endDate: endDate.format('YYYY/MM')
-      })
-    }).catch(next)
+    .then(totals => res.render('categories', {
+      viewName: 'categories',
+      totals: totals,
+      startDate: startDate.format('YYYY/MM'),
+      endDate: endDate.format('YYYY/MM')
+    }))
+    .catch(next)
 }
