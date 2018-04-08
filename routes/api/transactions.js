@@ -17,34 +17,30 @@ module.exports = router
 
 function get(req, res, next) {
   transactions.get(req.params.category)
-    .then(function(results) {
-      res.send(results)
-    }).catch(next)
+    .then(results => res.send(results))
+    .catch(next)
 }
 
 function post(req, res, next) {
   transactions.create(req.body)
-    .then(function() {
-      res.redirect('/')
-    }).catch(next)
+    .then(() => res.redirect('/'))
+    .catch(next)
 }
 
 function put(req, res, next) {
   transactions.edit(req.body)
-    .then(function(transaction) {
-      res.send(transaction)
-    }).catch(next)
+    .then(transaction => res.send(transaction))
+    .catch(next)
 }
 
 function remove(req, res, next) {
   const id = req.params.id
   transactions.remove(id)
-    .then(function() {
-      res.send({
-        status: 200,
-        message: 'Successfully removed transaction' + id
-      })
-    }).catch(next)
+    .then(() => res.send({
+      status: 200,
+      message: 'Successfully removed transaction' + id
+    }))
+    .catch(next)
 }
 
 function getTotals(req, res, next) {
@@ -62,7 +58,5 @@ function importTransactions(req, res, next) {
 
   importData(separator, data)
     .catch(next)
-    .then(function() {
-      res.redirect('/')
-    })
+    .then(() => res.redirect('/'))
 }
