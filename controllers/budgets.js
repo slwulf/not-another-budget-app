@@ -27,12 +27,17 @@ async function editBudget(budget) {
   const {id, amount, category} = budget
   const record = Budget.findById(id)
 
-  return record.update({
-    amount: amount
-      ? parseFloat(amount.replace(/\$|\,/g, ''))
-      : record.amount,
-    category: category || record.category
-  })
+  return record
+    .update({
+      amount: amount
+        ? parseFloat(amount.replace(/\$|\,/g, ''))
+        : record.amount,
+      category: category || record.category
+    }, { returning: true })
+    .then(({dataValues}) => {
+      dataValues.amount = numeral(dataValues.amount).format('$0,0.00')
+      return dataValues
+    })
 }
 
 function removeBudget(id) {
