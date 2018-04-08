@@ -46,7 +46,6 @@ module.exports = hbs.create({
      */
 
     money: function(number) {
-      if (typeof number !== 'number') return number
       return numeral(number).format('$0,0.00')
     },
 
