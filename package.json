@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "debug": "node --inspect ./bin/www",
-    "watch": "nodemon ./bin/www"
+    "migrate": "node ./config/migrate.js"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
