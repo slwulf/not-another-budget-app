@@ -1,46 +1,42 @@
 const fs = require('fs')
-const db = require('mongoose')
 const moment = require('moment')
+const {Transaction} = require('../models')
 const config = require('./import-config.json')
 
-module.exports = function importData(separator, data) {
-  const transactions = db.model('transactions')
-  const sep = separator === 'comma' ? ',' : '\t'
+module.exports = function importData(data) {
+  const transactions = parseCsv(data, config).map(row => {
+    const date = moment(row.date, 'MM/DD/YYYY')
+    const amount = row.debit
+      ? Number(row.debit) * -1
+      : Number(row.credit)
 
-  return new Promise(function(resolve, reject) {
-    // clean and get array
-    data.trim()
-      .replace(/\"/g, '')
-      .split('\n')
-
-      // split lines into arrays
-      .map(function(line) { return line.split(sep) })
-
-      // parse into array of objects
-      .map(function(line) {
-        const parsedDate = moment(line[config.date], 'MM/DD/YYYY')
-        const debit = line[config.debit]
-        const credit = line[config.credit]
-        const amount = debit ? parseFloat(debit) * -1 : parseFloat(credit)
-
-        if (debit === credit) {
-          amount = parseFloat(debit)
-        }
-
-        return {
-          description: line[config.description],
-          category: line[config.category],
-          date: parsedDate.toDate(),
-          amount: amount
-        }
-      })
-
-      .forEach(function(doc) {
-        transactions.create(doc, function(err) {
-          if (err) reject(err)
-        })
-      })
-
-    resolve({ status: 201, message: 'Import successful.' })
+    return {
+      description: row.description,
+      category: row.category,
+      date: date.toDate(),
+      amount: row.debit === row.credit ? Number(row.debit) : amount
+    }
   })
+
+  return Transaction
+    .bulkCreate(transactions)
+    .then(() => ({
+      status: 201,
+      message: 'Import successful.'
+    }))
+}
+
+function parseCsv(csv = '', cols = {}) {
+  const separator = csv.indexOf('\t') > -1 ? '\t' : ','
+  return csv.trim()
+    .replace(/\"/g, '')
+    .split('\n')
+    .map(line => line.split(separator))
+    .map(line => {
+      return Object.keys(cols).reduce((row, key) => {
+        const col = cols[key]
+        row[key] = line[col]
+        return row
+      }, {})
+    })
 }

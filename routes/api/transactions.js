@@ -53,10 +53,7 @@ function getTotals(req, res, next) {
 }
 
 function importTransactions(req, res, next) {
-  const separator = req.body.separator
-  const data = req.body.data
-
-  importData(separator, data)
+  importData(req.body.data)
     .catch(next)
     .then(() => res.redirect('/'))
 }
