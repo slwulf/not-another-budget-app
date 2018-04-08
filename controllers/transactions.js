@@ -1,4 +1,5 @@
 const {Transaction} = require('../models')
+const {Op} = require('sequelize')
 const db = require('mongoose')
 const numeral = require('numeral')
 const moment = require('moment')
@@ -110,52 +111,50 @@ function isCategory(cat) {
   return ({category}) => cat === category
 }
 
-function view(date, category) {
-  const year = parseInt(date.year, 10)
-  const month = parseInt(date.month, 10) - 1
-  const queryDate = date.month && date.year ? moment().set({year, month}) : moment()
-  const dateMin = queryDate.clone().startOf('month')
-  const dateMax = queryDate.clone().endOf('month')
+async function view({month, year}, category = '') {
+  const date = month && year
+    ? moment().set({ year: Number(year), month: Number(month) - 1 })
+    : moment()
 
-  return new Promise(function(resolve, reject) {
-    db.model('transactions').find({
-      date: { $gte: dateMin.toDate(), $lte: dateMax.toDate() }
-    }).exec(function(err, list) {
-      if (err) return reject(err)
+  const min = date.clone().startOf('month')
+  const max = date.clone().endOf('month')
 
-      const transactions = list.sort(function(a, b) {
-        if (a.date < b.date) return -1
-        if (a.date > b.date) return 1
-        return 0
-      }).reverse().filter(function(transaction) {
-        if (category) return isCategory(category)(transaction)
-        return true
-      })
-
-      const categories = list.map(t => t.category)
-        .filter((t, i, arr) => arr.indexOf(t) === i)
-        .sort()
-
-      const total = transactions.reduce((s, t) => s += t.amount, 0)
-      const totalIn = transactions.reduce((s, t) => t.amount > 0 ? s += t.amount : s, 0)
-      const totalOut = transactions.reduce((s, t) => t.amount < 0 ? s += t.amount : s, 0)
-
-      resolve({
-        viewName: 'transactions',
-        transactions: transactions,
-        totals: {
-          all: total,
-          income: totalIn,
-          expenses: totalOut
+  const [transactions, categories] = await (() => {
+    return Promise.all([
+      Transaction.findAll({
+        where: {
+          ...(category ? {category} : {}),
+          date: { [Op.gte]: min, [Op.lte]: max }
         },
-        category: category || '',
-        categories: categories,
-        date: queryDate.format('MMMM YYYY'),
-        currentDate: {
-          month: queryDate.format('MM'),
-          year: queryDate.format('YYYY')
-        }
+        order: [['date', 'DESC'], ['category', 'ASC']]
+      }),
+      Transaction.findAll({
+        attributes: ['category'],
+        group: 'category',
+        order: [['category', 'ASC']]
       })
-    })
-  })
+    ])
+  })()
+
+  const amounts = transactions.map(({amount}) => Number(amount) || 0)
+  const total = amounts.reduce((sum, a) => sum + a, 0)
+  const totalIn = amounts.reduce((sum, a) => a > 0 ? sum + a : sum, 0)
+  const totalOut = amounts.reduce((sum, a) => a < 0 ? sum + a : sum, 0)
+
+  return {
+    viewName: 'transactions',
+    transactions,
+    totals: {
+      all: total,
+      income: totalIn,
+      expenses: totalOut
+    },
+    category,
+    categories: categories.map(({category}) => category),
+    date: date.format('MMMM YYYY'),
+    currentDate: {
+      month: date.format('MM'),
+      year: date.format('YYYY')
+    }
+  }
 }
