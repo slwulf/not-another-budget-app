@@ -1,6 +1,5 @@
 const {Budget, Transaction} = require('../models')
 const {Op} = require('sequelize')
-const mongoose = require('mongoose')
 const numeral = require('numeral')
 const moment = require('moment')
 
