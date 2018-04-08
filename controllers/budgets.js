@@ -1,4 +1,5 @@
-const {Budget} = require('../models')
+const {Budget, Transaction} = require('../models')
+const {Op} = require('sequelize')
 const mongoose = require('mongoose')
 const numeral = require('numeral')
 const moment = require('moment')
@@ -23,124 +24,41 @@ function createBudget(category, amount) {
     .then(record => record.dataValues)
 }
 
-function editBudget(budget) {
-  const amount = budget.amount
-  const category = budget.category
+async function editBudget(budget) {
+  const {id, amount, category} = budget
+  const record = Budget.findById(id)
 
-  return new Promise(function(resolve, reject) {
-    mongoose.model('budgets')
-      .findById(budget.id, function(err, b) {
-        if (err) return reject(err)
-
-        if (amount) b.amount = parseFloat(amount.replace(/\$|\,/g, ''))
-        if (category) b.category = category.trim()
-
-        b.save(function(err) {
-          if (err) return reject(err)
-          b.amount = numeral(b.amount).format('$0,0.00')
-          resolve(b)
-        })
-      })
+  return record.update({
+    amount: amount
+      ? parseFloat(amount.replace(/\$|\,/g, ''))
+      : record.amount,
+    category: category || record.category
   })
 }
 
 function removeBudget(id) {
-  return new Promise(function(resolve, reject) {
-    mongoose.model('budgets')
-      .findByIdAndRemove(id, function(err) {
-        if (err) reject(err)
-        else resolve(true)
-      })
-  })
-}
-
-function oldView(date) {
-  const now = moment()
-  const year = date.year ? parseInt(date.year, 10) : now.year()
-  const month = date.month ? parseInt(date.month, 10) - 1 : now.month()
-  const displayDate = moment().set({ year, month })
-  const dateMin = displayDate.clone().startOf('month')
-  const dateMax = displayDate.clone().endOf('month')
-
-  return new Promise(function(resolve, reject) {
-    const budgets = mongoose.model('budgets').find()
-    const transactions = mongoose.model('transactions').find({
-      date: { $gte: dateMin.toDate(), $lte: dateMax.toDate() }
-    })
-
-    transactions.exec(function(err, ts) {
-      if (err) return reject(err)
-
-      const categoryTotals = ts.reduce(function(o, t) {
-        o[t.category] = o[t.category] || 0
-        o[t.category] += t.amount
-        return o
-      }, {})
-
-      budgets.exec(function(err, bs) {
-        if (err) return reject(err)
-
-        const viewBudgets = bs.map(function(b) {
-          const total = Math.abs(categoryTotals[b.category]) || 0
-          return {
-            _id: b._id,
-            category: b.category,
-            amount: b.amount,
-            totalSpent: total,
-            remainder: (b.amount - total),
-            isOver: (total > b.amount)
-          }
-        }).sort((a, b) => {
-          const catA = a.category.toLowerCase()
-          const catB = b.category.toLowerCase()
-          if (catA < catB) return -1
-          if (catA > catB) return 1
-          return 0
-        })
-
-        const totalBudget = bs.reduce((sum, b) => sum += b.amount, 0)
-        const totalSpent = ts.reduce((sum, t) => t.amount > 0 ? sum : sum += t.amount, 0)
-
-        const viewTotals = {
-          budget: totalBudget,
-          spent: totalSpent,
-          remainder: (totalBudget + totalSpent)
-        }
-
-        const existingBudgets = bs.map(b => b.category)
-        const neededBudgets = Object.keys(categoryTotals)
-          .filter(c => existingBudgets.indexOf(c) === -1)
-          .sort()
-
-        resolve({
-          viewName: 'budgets',
-          budgets: viewBudgets,
-          totals: viewTotals,
-          categories: neededBudgets,
-          date: displayDate.format('MMMM YYYY'),
-          currentDate: {
-            month: displayDate.format('MM'),
-            year: displayDate.format('YYYY')
-          }
-        })
-      })
-    })
-  })
+  return Budget.destroy({ where: {id} })
 }
 
 async function view({month = moment().month(), year = moment().year()}) {
   const date = moment().set({year, month})
+  const categories = await categoryTotals(date)
   const budgetRecords = await Budget.findAll()
   const budgets = budgetRecords
-    .map(record => record.dataValues)
-    .map(budget => ({
-      _id: budget.id, // TODO: remove underscore
-      category: budget.category,
-      amount: budget.amount,
-      totalSpent: 0, // TODO: calculate total from transactions
-      remainder: 0, // TODO: budget.amount - total
-      isOver: false // TODO: remainder < 0
-    }))
+    .map(budget => {
+      const amount = parseFloat(budget.amount) || 0
+      const totalSpent = Math.abs(categories[budget.category]) || 0
+      const remainder = amount - totalSpent
+      const isOver = remainder < 0
+      return {
+        _id: budget.id, // TODO: remove underscore
+        category: budget.category,
+        amount,
+        totalSpent,
+        remainder,
+        isOver
+      }
+    })
     .sort((a, b) => {
       const catA = a.category.toLowerCase()
       const catB = b.category.toLowerCase()
@@ -149,10 +67,16 @@ async function view({month = moment().month(), year = moment().year()}) {
       return 0
     })
 
+  const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0)
+  const totalSpent = Object.keys(categories).reduce((sum, key) => {
+    const total = categories[key] || 0
+    return sum + total
+  }, 0)
+
   const totals = {
-    budget: 0,
-    spent: 0,
-    remainder: 0
+    budget: totalBudget,
+    spent: totalSpent,
+    remainder: totalBudget + totalSpent
   }
 
   return {
@@ -166,4 +90,19 @@ async function view({month = moment().month(), year = moment().year()}) {
       year: date.format('YYYY')
     }
   }
+}
+
+function categoryTotals(date) {
+  const min = date.clone().startOf('month')
+  const max = date.clone().endOf('month')
+  const where = {
+    date: { [Op.gte]: min, [Op.lte]: max }
+  }
+
+  return Transaction.findAll({ where })
+    .reduce((sums, {category, amount}) => {
+      sums[category] = sums[category] || 0
+      sums[category] += (parseFloat(amount) || 0)
+      return sums
+    }, {})
 }
