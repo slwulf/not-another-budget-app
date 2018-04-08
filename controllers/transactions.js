@@ -1,6 +1,8 @@
+const {Transaction} = require('../models')
 const db = require('mongoose')
 const numeral = require('numeral')
 const moment = require('moment')
+const {pick} = require('ramda')
 
 module.exports = {
   get: getTransactions,
@@ -12,64 +14,38 @@ module.exports = {
 }
 
 function getTransactions(category) {
-  return new Promise(function(resolve, reject) {
-    const transactions = db.model('transactions').find()
-    if (category) transactions = transactions.where({category})
-
-    transactions.exec(function(err, list) {
-      if (err) reject(err)
-      else resolve(list)
-    })
-  })
+  const where = category ? {category} : {}
+  return Transaction
+    .findAll({ where })
+    .then((records = []) => records.map(r => r.dataValues))
 }
 
 function createTransaction(data) {
-  return new Promise(function(resolve, reject) {
-    db.model('transactions').create({
-      description: data.description || 'Transaction',
-      amount: data.amount || 0,
-      category: data.category || 'Default',
-      date: data.date || new Date()
-    }, function(err) {
-      if (err) reject(err)
-      else resolve(true)
-    })
-  })
+  const keys = ['description', 'amount', 'category', 'date']
+  const transaction = pick(keys, data)
+  return Transaction
+    .create(transaction)
+    .then(record => record.dataValues)
 }
 
-function editTransaction(data) {
-  const description = data.description
-  const amount = data.amount
-  const category = data.category
-  const date = data.date
+async function editTransaction(data) {
+  const {id, description, amount, category, date} = data
+  const record = Transaction.findById(id)
 
-  return new Promise(function(resolve, reject) {
-    db.model('transactions').findById(data.id,
-      function(err, t) {
-        if (err) return reject(err)
-
-        if (description) t.description = description.trim()
-        if (amount) t.amount = parseFloat(amount.replace(/\$|\,/g, ''))
-        if (category) t.category = category.trim()
-        if (date) t.date = new Date(date)
-
-        t.save(function(err) {
-          if (err) return reject(err)
-          t.amount = numeral(t.amount).format('$0,0.00')
-          resolve(t)
-        })
-      })
-  })
+  return record
+    .update({
+      description: description ? description.trim() : record.description,
+      amount: amount ? parseFloat(amount.replace(/\$|\,/g, '')) : parseFloat(record.amount),
+      category: category ? category.trim() : record.category,
+      date: date ? new Date(date) : record.date
+    }, { returning: true })
+    .then(({dataValues}) => {
+      dataValues.amount = numeral(dataValues.amount).format('$0,0.00')
+    })
 }
 
 function removeTransaction(id) {
-  return new Promise(function(resolve, reject) {
-    db.model('transactions')
-      .findByIdAndRemove(id, function(err) {
-        if (err) reject(err)
-        else resolve(true)
-      })
-  })
+  return Transaction.destroy({ where: {id} })
 }
 
 function categoryTotals(startDate, endDate) {
@@ -130,10 +106,8 @@ function categoryTotals(startDate, endDate) {
   })
 }
 
-function isCategory(category) {
-  return function(obj) {
-    return category === obj.category
-  }
+function isCategory(cat) {
+  return ({category}) => cat === category
 }
 
 function view(date, category) {
