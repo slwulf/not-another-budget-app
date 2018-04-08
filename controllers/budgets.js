@@ -47,8 +47,8 @@ function removeBudget(id) {
 async function view({month = moment().month(), year = moment().year()}) {
   const date = moment().set({year, month})
   const categories = await categoryTotals(date)
-  const budgetRecords = await Budget.findAll()
-  const budgets = budgetRecords
+  const budgets = await Budget
+    .findAll({ order: [['category', 'ASC']] })
     .map(budget => {
       const amount = parseFloat(budget.amount) || 0
       const totalSpent = Math.abs(categories[budget.category]) || 0
@@ -62,13 +62,6 @@ async function view({month = moment().month(), year = moment().year()}) {
         remainder,
         isOver
       }
-    })
-    .sort((a, b) => {
-      const catA = a.category.toLowerCase()
-      const catB = b.category.toLowerCase()
-      if (catA < catB) return -1
-      if (catA > catB) return 1
-      return 0
     })
 
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0)
