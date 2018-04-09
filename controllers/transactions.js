@@ -31,7 +31,7 @@ function createTransaction(data) {
 
 async function editTransaction(data) {
   const {id, description, amount, category, date} = data
-  const record = Transaction.findById(id)
+  const record = await Transaction.findById(id)
 
   return record
     .update({
@@ -143,7 +143,7 @@ async function view({month, year}, category = '') {
 
   return {
     viewName: 'transactions',
-    transactions,
+    transactions: transactions.map(({dataValues}) => dataValues),
     totals: {
       all: total,
       income: totalIn,

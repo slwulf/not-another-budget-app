@@ -25,7 +25,7 @@ function createBudget(category, amount) {
 
 async function editBudget(budget) {
   const {id, amount, category} = budget
-  const record = Budget.findById(id)
+  const record = await Budget.findById(id)
 
   return record
     .update({
@@ -55,7 +55,7 @@ async function view({month = moment().month(), year = moment().year()}) {
       const remainder = amount - totalSpent
       const isOver = remainder < 0
       return {
-        _id: budget.id, // TODO: remove underscore
+        id: budget.id,
         category: budget.category,
         amount,
         totalSpent,
