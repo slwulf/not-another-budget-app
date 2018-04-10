@@ -5,7 +5,6 @@ const favicon = require('serve-favicon')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
 
 // app
 const app = express()
@@ -35,12 +34,5 @@ app.set('view engine', '.hbs')
 
 // models
 require('./models').sequelize.sync()
-
-// mongoose setup
-fs.readdirSync(__dirname + '/models')
-  .map(f => ~f.indexOf('.mongoose.js') && require(`./models/${f}`))
-
-mongoose.Promise = global.Promise
-mongoose.connect('mongodb://localhost/nab-app')
 
 module.exports = app
