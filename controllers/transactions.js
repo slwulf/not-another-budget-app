@@ -1,6 +1,5 @@
 const {Transaction} = require('../models')
-const {Op} = require('sequelize')
-const db = require('mongoose')
+const {Op, literal} = require('sequelize')
 const numeral = require('numeral')
 const moment = require('moment')
 const {pick} = require('ramda')
@@ -49,62 +48,51 @@ function removeTransaction(id) {
   return Transaction.destroy({ where: {id} })
 }
 
-function categoryTotals(startDate, endDate) {
-  return new Promise(function(resolve, reject) {
-    db.model('transactions').aggregate([
-      { $match: {
-        date: { $gte: startDate, $lte: endDate }
-      }},
-      { $group: {
-        _id: {
-          category: '$category',
-          year: { $year: '$date' },
-          month: { $month: '$date' }
-        },
-        total: { $sum: '$amount' }
-      }}
-    ], function(err, results) {
-      if (err) reject(err)
-      else resolve(results)
-    })
-  }).then(function(results) {
-    return results.sort(function(a, b) {
-      const yearA = a._id.year
-      const yearB = b._id.year
-      const monthA = a._id.month
-      const monthB = b._id.month
-      return yearA - yearB || monthA - monthB
-    })
-  }).then(function(results) {
-    const months = results.reduce(function(ms, m) {
-      const id = m._id
-      const year = id.year
-      const month = id.month < 10 ? '0' + id.month : id.month
-      const date = moment(year + '-' + month).format('MMM YYYY')
-
-      if (ms.indexOf(date) === -1) ms.push(date)
-
-      return ms
-    }, [])
-
-    return results.reduce(function(totals, t) {
-      const id = t._id
-      const category = id.category
-      const amount = parseFloat(t.total.toFixed(2))
-      const year = id.year
-      const month = id.month < 10 ? '0' + id.month : id.month
-      const date = moment(year + '-' + month).format('MMM YYYY')
-      const index = months.indexOf(date)
-
-      totals[category] = totals[category] || months.slice()
-      totals[category][index] = {
-        date: date,
-        amount: Math.abs(amount)
-      }
-
-      return totals
-    }, {})
+async function categoryTotals(startDate, endDate) {
+  const date = { [Op.gte]: startDate, [Op.lte]: endDate }
+  const query = await Transaction.findAll({
+    where: {date},
+    attributes: [
+      [literal('EXTRACT(month FROM date)'), 'month'],
+      [literal('EXTRACT(year FROM date)'), 'year'],
+      [literal('category'), 'category'],
+      [literal('SUM(amount)'), 'total']
+    ],
+    group: [
+      literal('category'),
+      literal('year'),
+      literal('month')
+    ],
+    order: [
+      [literal('year'), 'ASC'],
+      [literal('month'), 'ASC'],
+      [literal('category'), 'ASC']
+    ]
   })
+
+  const categories = query
+    .map(({dataValues}) => dataValues)
+    .map(({year, month, category, total}) => ({
+      category,
+      date: moment().set({year, month: month - 1}).format('MMM YYYY'),
+      total: Number(total)
+    }))
+
+  const months = categories.reduce((result, {date}) => {
+    if (result.indexOf(date) < 0) result.push(date)
+    return result
+  }, [])
+
+  const totals = categories
+    .reduce((result, {date, category, total}) => {
+      const amount = Math.abs(total)
+      const index = months.indexOf(date)
+      result[category] = result[category] || months.slice()
+      result[category][index] = {date, amount}
+      return result
+    }, {})
+
+  return totals
 }
 
 function isCategory(cat) {

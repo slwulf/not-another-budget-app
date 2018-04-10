@@ -26,19 +26,17 @@ function render(req, res, next) {
 }
 
 function categories(req, res, next) {
-  const start = req.params.start_date || new Date()
-  const end = req.params.end_date || new Date()
-  const startDate = moment(start).startOf('month')
-  const endDate = moment(end).endOf('month')
+  const end = moment(req.params.end_date).endOf('month')
+  const start = req.params.start_date
+    ? moment(req.params.start_date).startOf('month')
+    : moment(req.params.start_date).startOf('month').subtract(1, 'months')
 
-  if (!req.params.start_date) startDate = startDate.subtract(1, 'months')
-
-  transactions.totals(startDate.toDate(), endDate.toDate())
+  transactions.totals(start.toDate(), end.toDate())
     .then(totals => res.render('categories', {
       viewName: 'categories',
       totals: totals,
-      startDate: startDate.format('YYYY/MM'),
-      endDate: endDate.format('YYYY/MM')
+      startDate: start.format('YYYY/MM'),
+      endDate: end.format('YYYY/MM')
     }))
     .catch(next)
 }
