@@ -1,8 +1,8 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 
-var api = require('./api')
-var views = require('./views')
+const api = require('./api')
+const views = require('./views')
 
 router.use('/', views)
 router.use('/api', api)

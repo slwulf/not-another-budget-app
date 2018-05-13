@@ -1,41 +1,37 @@
-# Not Another Budget App
+# `not-another-budget-app`
 
-I originally started this as a client JavaScript app and attempted to do it without a framework.
+this is the app i use to track my personal finances and budget. i can't believe i started working on this several years ago and, through several iterations, it still works and i still use it.
 
-That was a mistake.
+### getting started
 
-So now out of necessity I've started over as an Express/Mongo app.
+before use, be sure to have the following dependencies installed:
 
-### Usage
+- node >=9 (i'm running on 9.10, haven't experimented with older versions)
+- postgres >= 9 (i'm running on 10.3, but not using any significantly new features)
 
-This app actually works now! You can get it running locally with the following steps:
+then, clone the repo and run `npm install` to fetch the node dependencies.
 
-- Make sure you have MongoDB installed.
-- Fork the repo and pull it down.
-- Navigate to the directory and run the following commands:
+run `npm start` to run the app.
 
-```
-npm install
-npm run debug
-```
+### usage
 
-Once you've got it running, you can access the app in your browser at `localhost:3000`. Here's a few tips for working with the UI, since I designed it for myself:
-* You can edit any point of data (description, category, amount, etc.) by clicking on it and editing it in-line. This will save changes as you type. If you accidentally remove all of the text of an element and lock yourself out of editing it, you can refresh the page to get back without losing the original value.
-* Budget categories can be deleted by changing any of their values to `***`.
+it's a budget app! you can manually enter transactions and budget categories on their respective pages. you can edit both by clicking any piece of data visible on the page. also, a weird quirk that i intend to remove at some point: budget categories can be deleted by changing any of their values to `***`.
 
-##### Importing Transactions
+the "categories" page allows you to view month-over-month totals for every category.
 
-The import tab in the interface allows you to import transactions from CSV. Paste the content of your CSV into the text area and click submit.
+#### importing transactions
 
-You can use the import functionality by setting up [config/import-config.json](./config/import-config.json). Your CSV should have columns that correspond to the keys description, category, debit, credit, and date. (If your CSV has only one amount column, use the same index of debit and credit.)
+you can import transactions from a csv or tsv file. go to the import page and paste the contents of your file into the textarea.
 
-The column indexes are zero-indexed like arrays. For example, if your CSV looks like this...
+you'll first need to create `config/import-config.json` to configure how columns are defined in your import data. your csv should have columns that correspond to the keys `description`, `category`, `debit`, `credit`, and `date`. (if your csv has only one column for debits and credits, like "amount", use the same index for both.)
+
+the column indices should be zero-indexed. so for example, if you have a csv like this:
 
 | Status | Date       | Card | Category | Message          | Debit   | Credit |
 | ------ | ---------- | ---- | -------- | ---------------- | ------- | ------ |
 | New    | 05/20/2016 | 1234 | Travel   | SWA FLIGHT 12345 | -200.00 | 0.00   |
 
-Status would be 0, date would be 1, and so on. So, your `import-config.json` would look like this:
+status would be 0, date would be 1, and so on. for this csv, `import-config.json` should look like this:
 
 ```javascript
 {
@@ -46,7 +42,3 @@ Status would be 0, date would be 1, and so on. So, your `import-config.json` wou
   "date": 1
 }
 ```
-
-### Contributing
-
-Moral support is always appreciated! This is a solo, personal project, and I honestly don't expect anyone to contribute.

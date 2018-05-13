@@ -1,18 +1,26 @@
-/**
- * Transactions Model
- */
+module.exports = (sequelize, DataTypes) => {
+  const Transaction = sequelize.define('transaction', {
+    description: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: ''
+    },
+    amount: {
+      type: DataTypes.DECIMAL,
+      allowNull: true,
+      defaultValue: 0
+    },
+    category: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: ''
+    },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW
+    }
+  })
 
-// deps
-var db = require('mongoose')
-var Schema = db.Schema
-
-// create schema
-var transactionsSchema = new Schema({
-  description: String,
-  amount: Number,
-  category: String,
-  date: { type: Date, default: Date.now }
-})
-
-// register model with schema
-db.model('transactions', transactionsSchema)
+  return Transaction
+}

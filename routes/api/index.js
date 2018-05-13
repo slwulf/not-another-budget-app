@@ -1,8 +1,8 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
 
-var transactions = require('./transactions')
-var budgets = require('./budgets')
+const transactions = require('./transactions')
+const budgets = require('./budgets')
 
 router.use('/transactions', transactions)
 router.use('/budgets', budgets)

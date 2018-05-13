@@ -1,25 +1,13 @@
-/**
- * Not Another Budget App
- * 0.0.0
- *
- */
-
-// deps
-var express = require('express')
-var fs = require('fs')
-var path = require('path')
-var favicon = require('serve-favicon')
-var logger = require('morgan')
-var cookieParser = require('cookie-parser')
-var bodyParser = require('body-parser')
-var db = require('mongoose')
-
-/**
- * init
- */
+const express = require('express')
+const fs = require('fs')
+const path = require('path')
+const favicon = require('serve-favicon')
+const logger = require('morgan')
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 
 // app
-var app = express()
+const app = express()
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.png')))
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -35,27 +23,16 @@ app.use(require('node-sass-middleware')({
 app.use(express.static(path.join(__dirname, 'public')))
 
 // routes
-var routes = require('./routes/index')
+const routes = require('./routes/index')
 app.use('/', routes)
 
 // views
-var hbs = require('./config/handlebars')
+const hbs = require('./config/handlebars')
 app.set('views', path.join(__dirname, 'views'))
 app.engine('.hbs', hbs.engine)
 app.set('view engine', '.hbs')
 
 // models
-fs.readdirSync(__dirname + '/models')
-.map(function(fn) {
-  if (~fn.indexOf('.js')) require('./models/' + fn)
-})
-
-// import
-var importCSV = require('./config/import')
-// importCSV(fs.readFileSync('./csv/transactions.csv', 'utf-8'))
-
-// db
-db.Promise = global.Promise
-db.connect('mongodb://localhost/nab-app')
+require('./models').sequelize.sync()
 
 module.exports = app
