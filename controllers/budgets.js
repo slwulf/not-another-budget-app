@@ -44,8 +44,11 @@ function removeBudget(id) {
   return Budget.destroy({ where: {id} })
 }
 
-async function view({month = moment().month(), year = moment().year()}) {
-  const date = moment().set({year, month})
+async function view({month, year}) {
+  const date = month && year
+    ? moment().set({ year: Number(year), month: Number(month) - 1 })
+    : moment()
+
   const categories = await categoryTotals(date)
   const budgets = await Budget
     .findAll({ order: [['category', 'ASC']] })
@@ -65,15 +68,17 @@ async function view({month = moment().month(), year = moment().year()}) {
     })
 
   const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0)
-  const totalSpent = Object.keys(categories).reduce((sum, key) => {
-    const total = categories[key] || 0
-    return sum + total
-  }, 0)
+  const totalSpent = Object.keys(categories)
+    .filter(cat => cat !== 'Income')
+    .reduce((sum, key) => {
+      const total = categories[key] || 0
+      return sum - total
+    }, 0)
 
   const totals = {
     budget: totalBudget,
     spent: totalSpent,
-    remainder: totalBudget + totalSpent
+    remainder: totalBudget - totalSpent
   }
 
   return {
