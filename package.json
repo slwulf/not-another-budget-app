@@ -6,8 +6,9 @@
     "start": "node ./bin/www",
     "start:debug": "node --inspect ./bin/www",
     "start:watch": "nodemon ./bin/www",
-    "start:client": "node ./scripts/start.js",
-    "build:client": "node ./scripts/build.js",
+    "start:client": "parcel ./src/index.html",
+    "start:client:watch": "parcel watch ./src/index.html",
+    "build:client": "echo \"parcel build tbd\"",
     "db:migrate": "node ./config/migrate.js"
   },
   "dependencies": {
