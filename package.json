@@ -8,7 +8,7 @@
     "start:watch": "nodemon ./bin/www",
     "start:client": "parcel ./src/index.html",
     "start:client:watch": "parcel watch ./src/index.html",
-    "build:client": "echo \"parcel build tbd\"",
+    "build:client": "parcel build ./src/index.html -d ./public/build",
     "db:migrate": "node ./config/migrate.js"
   },
   "dependencies": {

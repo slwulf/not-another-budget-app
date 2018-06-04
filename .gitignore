@@ -13,4 +13,5 @@ node_modules
 
 tmp/
 dist/
+public/build/
 config/import-config.json
