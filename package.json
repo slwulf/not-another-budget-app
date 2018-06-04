@@ -23,6 +23,8 @@
     "numeral": "^1.5.3",
     "pg": "^7.4.1",
     "ramda": "^0.25.0",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "sequelize": "^4.37.5",
     "serve-favicon": "~2.3.0"
   },
