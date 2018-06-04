@@ -13,5 +13,7 @@ node_modules
 
 tmp/
 dist/
-public/build/
+public/*.html
+public/*.js
+public/*.map
 config/import-config.json
