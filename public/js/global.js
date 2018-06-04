@@ -109,6 +109,7 @@
     transaction[key] = value;
 
     updateTransaction(transaction);
+    // TODO: if (key === Enter) $event.blur()
   }
 
   /**
