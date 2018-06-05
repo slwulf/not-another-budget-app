@@ -1,0 +1,24 @@
+@import '../../Style/config';
+
+$card-background: color(gray);
+$card-text: color(gray, light);
+
+.card {
+  color: $card-text;
+  background-color: $card-background;
+  padding: 1rem;
+
+  .card-title {
+    margin: 0;
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  :last-child {
+    margin-bottom: 0;
+  }
+}
