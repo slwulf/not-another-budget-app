@@ -9,7 +9,7 @@ export default function App() {
     <Router>
       <div className="wrapper">
         <Header navigation={[
-          { to: '/', label: 'Transactions' },
+          { to: '/transactions', label: 'Transactions' },
           { to: '/budgets', label: 'Budgets' },
           { to: '/reports', label: 'Reports' }
         ]} />

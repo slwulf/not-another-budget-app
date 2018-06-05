@@ -1,10 +1,12 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import {NavLink} from 'react-router-dom'
+
+import './index.scss'
 
 const NavItem = props =>
-  <Link className="header-nav-item" to={props.to}>
+  <NavLink className="header-nav-item" to={props.to}>
     {props.label}
-  </Link>
+  </NavLink>
 
 export default function Header({navigation = []}) {
   return (
