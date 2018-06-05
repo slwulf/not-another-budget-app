@@ -62,3 +62,18 @@ a.link {
   &.primary { color: color(primary); }
   &.secondary { color: color(secondary); }
 }
+
+// form
+label.form-field {
+  display: block;
+  margin: 0 0 1rem;
+
+  span {
+    font-size: 0.9rem;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+  }
+}
