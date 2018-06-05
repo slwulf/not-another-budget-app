@@ -17,6 +17,9 @@ export default function Header({navigation = []}) {
             <NavItem key={`NavItem-${nav.to}`} {...nav} />)
         }
       </nav>
+      <div className="header-logo">
+        <span>NAB</span>
+      </div>
     </div>
   )
 }

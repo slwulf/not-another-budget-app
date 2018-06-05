@@ -1,8 +1,11 @@
 @import '../../Style/config';
 
 .header {
+  display: flex;
   margin: 2rem 0;
   width: 100%;
+  justify-content: space-between;
+  align-items: center;
 
   .header-nav {
     display: flex;
@@ -21,5 +24,13 @@
       color: color(secondary);
       text-decoration: underline;
     }
+  }
+
+  .header-logo {
+    border: 1px dashed currentColor;
+    font-family: monospace;
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 5px 8px;
   }
 }
