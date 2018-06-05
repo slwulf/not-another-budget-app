@@ -20,14 +20,34 @@ body {
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;
   width: 100%;
 }
 
-// probably not base at this point, but w/e
-$panel-background: color(gray);
-$panel-text: color(gray, dark);
+// buttons
+.button {
+  border: 0;
+  color: color(gray, light);
+  cursor: pointer;
+  display: block;
+  font-size: 1rem;
+  padding: 3px 8px;
+  text-align: center;
 
-.panel {
-  background-color: $panel-background;
-  color: $panel-text;
+  &.primary {
+    background-color: color(primary);
+    &.link { color: color(primary); }
+  }
+
+  &.secondary {
+    background-color: color(secondary);
+    &.link { color: color(secondary); }
+  }
+
+  &.link {
+    background-color: transparent;
+    padding: 0;
+    text-align: left;
+    text-decoration: underline;
+  }
 }
