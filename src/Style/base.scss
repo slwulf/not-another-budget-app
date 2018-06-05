@@ -16,3 +16,18 @@ body {
   background-color: $body-background;
   color: $body-text;
 }
+
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// probably not base at this point, but w/e
+$panel-background: color(gray);
+$panel-text: color(gray, dark);
+
+.panel {
+  background-color: $panel-background;
+  color: $panel-text;
+}

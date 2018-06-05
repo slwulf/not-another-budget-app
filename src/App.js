@@ -7,14 +7,14 @@ import './Style/base.scss'
 export default function App() {
   return (
     <Router>
-      <React.Fragment>
+      <div className="wrapper">
         <Header navigation={[
           { to: '/', label: 'Transactions' },
           { to: '/budgets', label: 'Budgets' },
           { to: '/reports', label: 'Reports' }
         ]} />
         <p>thinger!</p>
-      </React.Fragment>
+      </div>
     </Router>
   )
 }
