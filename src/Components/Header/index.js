@@ -1,9 +1,20 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-export default function Header() {
+const NavItem = props =>
+  <Link className="header-nav-item" to={props.to}>
+    {props.label}
+  </Link>
+
+export default function Header({navigation = []}) {
   return (
     <div className="header">
-      <p>I'm the header!</p>
+      <nav className="header-nav">
+        {
+          navigation.map(nav =>
+            <NavItem key={`NavItem-${nav.to}`} {...nav} />)
+        }
+      </nav>
     </div>
   )
 }
