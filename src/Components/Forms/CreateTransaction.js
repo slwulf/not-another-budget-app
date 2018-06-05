@@ -1,28 +1,34 @@
 import React from 'react'
+import {Link} from 'react-router-dom'
 
-const Actions = ({actions = {}}) =>
-  <div className="card-actions">
-    {actions.primaryLabel &&
-      <button
-        type="button"
-        className="button primary"
-        onClick={actions.primary}>
-        {actions.primaryLabel}
-      </button>
-    }
-    {actions.secondaryLabel &&
-      <button
-        type="button"
-        className="button secondary link"
-        onClick={actions.secondary}>
-        {actions.secondaryLabel}
-      </button>
-    }
-  </div>
+import Form from './Form'
 
-export default function CreateTransaction(props) {
-  return <React.Fragment>
-    <pre>{JSON.stringify(props, null, 2)}</pre>
-    <Actions actions={props.actions} />
-  </React.Fragment>
+export default class CreateTransaction extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  onSubmit(values) {
+    console.log(values)
+  }
+
+  render(props) {
+    return <React.Fragment>
+      <Form
+        onSubmit={this.onSubmit.bind(this)}
+        submitLabel="Add Transaction"
+        secondaryAction={() => (
+          <Link to="/import" className="link secondary">
+            Import...
+          </Link>
+        )}
+        fields={[{
+          type: 'text',
+          name: 'description'
+        }, {
+          type: 'number',
+          name: 'amount'
+        }]} />
+    </React.Fragment>
+  }
 }
