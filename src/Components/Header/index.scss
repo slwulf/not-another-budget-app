@@ -1,0 +1,25 @@
+@import '../../Style/config';
+
+.header {
+  margin: 2rem 0;
+  width: 100%;
+
+  .header-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+  }
+
+  .header-nav-item {
+    color: color(primary);
+    font-size: 1.5rem;
+    font-weight: 300;
+    text-decoration: none;
+
+    &:hover, &.active {
+      color: color(secondary);
+      text-decoration: underline;
+    }
+  }
+}
