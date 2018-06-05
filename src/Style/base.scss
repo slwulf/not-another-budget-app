@@ -1,0 +1,18 @@
+// reset
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: sans-serif;
+}
+
+// base
+@import './config';
+$body-background: color(gray, dark);
+$body-text: color(gray, light);
+
+body {
+  background-color: $body-background;
+  color: $body-text;
+}
