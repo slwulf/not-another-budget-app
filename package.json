@@ -3,11 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prestart": "npm run build:client",
     "start": "node ./bin/www",
-    "start:debug": "node --inspect ./bin/www",
-    "start:watch": "nodemon ./bin/www",
-    "start:client": "parcel ./src/index.html",
-    "start:client:watch": "parcel watch ./src/index.html",
+    "start:server:watch": "nodemon --ignore src/ --ignore public/ ./bin/www",
+    "start:server:debug": "node --inspect ./bin/www",
+    "start:client": "parcel ./src/index.html -d ./public",
+    "start:client:watch": "parcel watch ./src/index.html -d ./public",
+    "prebuild:client": "rm ./public/*.{html,js,map}",
     "build:client": "parcel build ./src/index.html -d ./public",
     "db:migrate": "node ./config/migrate.js"
   },
