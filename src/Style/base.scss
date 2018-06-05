@@ -51,3 +51,14 @@ body {
     text-decoration: underline;
   }
 }
+
+a.link {
+  background-color: transparent;
+  color: $body-text;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+
+  &.primary { color: color(primary); }
+  &.secondary { color: color(secondary); }
+}
