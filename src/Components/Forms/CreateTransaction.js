@@ -31,8 +31,10 @@ export default class CreateTransaction extends React.Component {
         type: 'number',
         name: 'amount'
       }, {
-        type: 'autocomplete',
+        type: 'text',
         name: 'category'
+        // TODO: make this an autocomplete
+        // with free entry & list of categories
       }]} />
   }
 }
