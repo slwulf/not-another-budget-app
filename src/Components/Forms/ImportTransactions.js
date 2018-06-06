@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom'
 
 import Form from './Form'
 
-export default class CreateTransaction extends React.Component {
+export default class ImportTransactions extends React.Component {
   constructor(props) {
     super(props)
   }
