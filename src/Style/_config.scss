@@ -1,0 +1,47 @@
+// colors
+$COLORS: (
+  gray: (
+    base: #5c5660,
+    dark: #231c28,
+    light: #fff7e9
+  ),
+  primary: (
+    base: #999
+  ),
+  secondary: (
+    base: #ccc
+  ),
+  red: (
+    base: #ae4557
+  ),
+  green: (
+    base: #23c730
+  )
+);
+
+@function color($color, $tone: 'base') {
+  @if map-has-key($COLORS, $color) {
+    @if map-has-key(map-get($COLORS, $color), $tone) {
+      @return map-get(map-get($COLORS, $color), $tone);
+    } @else {
+      @warn "Unknown `#{$tone}` in `#{$color}`.";
+
+      @return null;
+    }
+  }
+
+  @warn "Unknown `#{$color}` in $COLORS.";
+
+  @return null;
+}
+
+/*
+Colors to be decided on:
+- body background (dark gray)
+- panel background (medium/light gray)
+- body text (light gray, or medium/dark gray [body bg?] when on panel)
+- primary (for most actions, like "Add Transaction")
+- secondary (for secondary actions, or for labels, like transaction category)
+- red (for negative numbers)
+- green (for positive numbers)
+*/
