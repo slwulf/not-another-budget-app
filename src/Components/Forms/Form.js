@@ -12,13 +12,12 @@ const FormField = props => (
 )
 
 const Field = props => {
-  const key = `Field-${props.name}`
   const label = props.label || capitalize(props.name)
 
   switch (props.type) {
     case 'textarea':
       return (
-        <FormField key={key} label={label}>
+        <FormField label={label}>
           <textarea
             name={props.name}
             value={props.value || ''}
@@ -27,15 +26,15 @@ const Field = props => {
       )
     case 'autocomplete':
       return (
-        <FormField key={key} label={label}>
+        <FormField label={label}>
           <p>autocomplete</p>
         </FormField>
       )
     default:
       return (
-        <FormField key={key} label={label}>
+        <FormField label={label}>
           <input
-            autocomplete="off"
+            autoComplete="off"
             type={props.type}
             name={props.name}
             value={props.value || ''}
@@ -79,6 +78,7 @@ export default class Form extends React.Component {
       <form onSubmit={this.handleSubmit.bind(this)} className={this.props.className}>
         {(fields || []).map(field => (
           <Field
+            key={`Field-${field.name}`}
             value={this.state[field.name]}
             onChange={this.handleChange.bind(this)}
             {...field} />
