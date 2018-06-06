@@ -4,6 +4,47 @@ const capitalize = str => {
   return str[0].toUpperCase() + str.substr(1, str.length)
 }
 
+const FormField = props => (
+  <label className="form-field">
+    <span>{props.label}</span>
+    {props.children}
+  </label>
+)
+
+const Field = props => {
+  const key = `Field-${props.name}`
+  const label = props.label || capitalize(props.name)
+
+  switch (props.type) {
+    case 'textarea':
+      return (
+        <FormField key={key} label={label}>
+          <textarea
+            name={props.name}
+            value={props.value || ''}
+            onChange={props.onChange} />
+        </FormField>
+      )
+    case 'autocomplete':
+      return (
+        <FormField key={key} label={label}>
+          <p>autocomplete</p>
+        </FormField>
+      )
+    default:
+      return (
+        <FormField key={key} label={label}>
+          <input
+            autocomplete="off"
+            type={props.type}
+            name={props.name}
+            value={props.value || ''}
+            onChange={props.onChange} />
+        </FormField>
+      )
+  }
+}
+
 export default class Form extends React.Component {
   constructor(props) {
     super(props)
@@ -37,16 +78,10 @@ export default class Form extends React.Component {
     return (
       <form onSubmit={this.handleSubmit.bind(this)} className={this.props.className}>
         {(fields || []).map(field => (
-          <label className="form-field" key={`Field-${field.name}`}>
-            <span>
-              {field.label || capitalize(field.name)}
-            </span>
-            <input
-              type={field.type}
-              name={field.name}
-              value={this.state[field.name] || ''}
-              onChange={this.handleChange.bind(this)} />
-          </label>
+          <Field
+            value={this.state[field.name]}
+            onChange={this.handleChange.bind(this)}
+            {...field} />
         ))}
         <div className="card-actions">
           <button type="submit" className="button primary">
@@ -64,4 +99,8 @@ function getValues(elements) {
   return Array.from(elements)
     .filter(input => input.value)
     .map(({name, value}) => ({name, value}))
+    .reduce((values, {name, value}) => {
+      values[name] = value
+      return values
+    }, {})
 }
