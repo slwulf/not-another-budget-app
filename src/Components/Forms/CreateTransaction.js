@@ -13,28 +13,26 @@ export default class CreateTransaction extends React.Component {
   }
 
   render(props) {
-    return <React.Fragment>
-      <Form
-        onSubmit={this.onSubmit.bind(this)}
-        submitLabel="Add Transaction"
-        secondaryAction={() => (
-          <Link to="/transactions/import" className="link secondary">
-            Import...
-          </Link>
-        )}
-        fields={[{
-          type: 'text',
-          name: 'description'
-        }, {
-          type: 'date',
-          name: 'date'
-        }, {
-          type: 'number',
-          name: 'amount'
-        }, {
-          type: 'autocomplete',
-          name: 'category'
-        }]} />
-    </React.Fragment>
+    return <Form
+      onSubmit={this.onSubmit.bind(this)}
+      submitLabel="Add Transaction"
+      secondaryAction={() => (
+        <Link to="/transactions/import" className="link secondary">
+          Import...
+        </Link>
+      )}
+      fields={[{
+        type: 'text',
+        name: 'description'
+      }, {
+        type: 'date',
+        name: 'date'
+      }, {
+        type: 'number',
+        name: 'amount'
+      }, {
+        type: 'autocomplete',
+        name: 'category'
+      }]} />
   }
 }
