@@ -72,8 +72,15 @@ label.form-field {
     font-size: 0.9rem;
   }
 
-  input {
+  input, textarea {
     display: block;
+    font-family: sans-serif;
+    font-size: 1rem;
     width: 100%;
+  }
+
+  textarea {
+    min-height: 3.5rem;
+    resize: vertical;
   }
 }
