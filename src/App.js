@@ -42,7 +42,16 @@ export default function App() {
                     }} />
                 )} />
             )} />
-            <Route path="/budgets" render={() => <p>add budgets!</p>} />
+            <Route path="/budgets" render={() => (
+              <Card
+                title="Add a Budget"
+                children={(
+                  <Forms.CreateBudget
+                    onSubmit={state => {
+                      console.log('hello from app', state)
+                    }} />
+                )} />
+            )} />
           </Switch>
         </section>
         <section className="summary-panel">
