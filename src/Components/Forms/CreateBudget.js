@@ -2,6 +2,7 @@ import React from 'react'
 import {Link} from 'react-router-dom'
 
 import Form from './Form'
+import * as Api from '../../Utility/Api'
 
 export default class CreateBudget extends React.Component {
   constructor(props) {
@@ -9,7 +10,9 @@ export default class CreateBudget extends React.Component {
   }
 
   onSubmit(values) {
-    console.log(values)
+    Api.Budgets.post('/new', values)
+      .then(response => console.log('server response: ', response))
+      .catch(error => console.log('oops!', error))
   }
 
   render(props) {
@@ -18,12 +21,12 @@ export default class CreateBudget extends React.Component {
       submitLabel="Add Budget"
       fields={[{
         type: 'text',
-        name: 'description'
-      }, {
-        type: 'text',
         name: 'category'
         // TODO: make this an autocomplete
         // with free entry & list of categories
+      }, {
+        type: 'text',
+        name: 'amount'
       }]} />
   }
 }
