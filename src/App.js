@@ -9,60 +9,25 @@ import {
 import Header from './Components/Header'
 import Card from './Components/Card'
 import * as Forms from './Components/Forms'
+import * as Panels from './Containers/Panels'
 import './Style/base.scss'
 
 export default function App() {
   return (
     <Router>
-      <div className="wrapper">
-        <Header navigation={[
-          { to: '/transactions', label: 'Transactions' },
-          { to: '/budgets', label: 'Budgets' },
-          { to: '/reports', label: 'Reports' }
-        ]} />
-        <section className="form-panel">
-          <Switch>
-            <Route exact path="/transactions" render={() => (
-              <Card title="Add a Transaction">
-                <Forms.CreateTransaction
-                  onSubmit={state => {
-                    console.log('hello from app', state)
-                  }} />
-              </Card>
-            )} />
-            <Route exact path="/transactions/import" render={() => (
-              <Card title="Import Transactions">
-                <Forms.ImportTransactions
-                  onSubmit={state => {
-                    console.log('hello from app', state)
-                  }} />
-              </Card>
-            )} />
-            <Route path="/budgets" render={() => (
-              <Card title="Add a Budget">
-                <Forms.CreateBudget
-                  onSubmit={state => {
-                    console.log('hello from app', state)
-                  }} />
-              </Card>
-            )} />
-          </Switch>
-        </section>
-        <section className="summary-panel">
-          <Switch>
-            <Route path="/transactions" render={() => <p>transactions summary!</p>} />
-            <Route path="/budgets" render={() => <p>budgets summary!</p>} />
-          </Switch>
-        </section>
-        <section className="details-panel">
-          <Switch>
-            <Route exact path="/" render={() => <Redirect to="/transactions" />} />
-            <Route path="/transactions" render={() => <p>transactions list!</p>} />
-            <Route path="/budgets" render={() => <p>budgets list!</p>} />
-            <Route path="/reports" render={() => <p>reports view!</p>} />
-          </Switch>
-        </section>
-      </div>
+      <React.Fragment>
+        <Route exact path="/" render={() => <Redirect to="/transactions" />} />
+        <div className="wrapper">
+          <Header navigation={[
+            { to: '/transactions', label: 'Transactions' },
+            { to: '/budgets', label: 'Budgets' },
+            { to: '/reports', label: 'Reports' }
+          ]} />
+          <Panels.Form />
+          <Panels.Summary />
+          <Panels.Details />
+        </div>
+      </React.Fragment>
     </Router>
   )
 }
