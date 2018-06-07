@@ -23,26 +23,29 @@ export default function App() {
         <section className="form-panel">
           <Switch>
             <Route exact path="/transactions" render={() => (
-              <Card
-                title="Add a Transaction"
-                children={(
-                  <Forms.CreateTransaction
-                    onSubmit={state => {
-                      console.log('hello from app', state)
-                    }} />
-                )} />
+              <Card title="Add a Transaction">
+                <Forms.CreateTransaction
+                  onSubmit={state => {
+                    console.log('hello from app', state)
+                  }} />
+              </Card>
             )} />
             <Route exact path="/transactions/import" render={() => (
-              <Card
-                title="Import Transactions"
-                children={(
-                  <Forms.ImportTransactions
-                    onSubmit={state => {
-                      console.log('hello from app', state)
-                    }} />
-                )} />
+              <Card title="Import Transactions">
+                <Forms.ImportTransactions
+                  onSubmit={state => {
+                    console.log('hello from app', state)
+                  }} />
+              </Card>
             )} />
-            <Route path="/budgets" render={() => <p>add budgets!</p>} />
+            <Route path="/budgets" render={() => (
+              <Card title="Add a Budget">
+                <Forms.CreateBudget
+                  onSubmit={state => {
+                    console.log('hello from app', state)
+                  }} />
+              </Card>
+            )} />
           </Switch>
         </section>
         <section className="summary-panel">
