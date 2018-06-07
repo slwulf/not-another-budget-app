@@ -1,1 +1,11 @@
 @import '../../Style/config';
+
+.list-item {
+  align-items: center;
+  background-color: color(gray);
+  border-bottom: 1px solid color(gray, dark);
+  display: flex;
+  justify-content: space-between;
+  padding: .5rem;
+  width: 100%;
+}
