@@ -8,4 +8,24 @@
   justify-content: space-between;
   padding: .5rem;
   width: 100%;
+
+  .list-item-delete {
+    background-color: transparent;
+    border: 0;
+    color: color(gray, light);
+    cursor: pointer;
+    flex-basis: 10px;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0;
+    transition: color .1s;
+
+    &:hover, &:focus {
+      color: color(red);
+    }
+
+    &:focus {
+      outline: 0;
+    }
+  }
 }
