@@ -13,14 +13,7 @@
     <strong>({{ money totalSpent }})</strong>
   </div>
   <div class="col-xs-2 text-right">
-    <strong
-      {{#compare isOver "==" true}}
-      class="budget-total label label-danger"
-      {{/compare}}
-      {{#compare isOver "==" false}}
-      class="budget-total label label-success"
-      {{/compare}}
-    >
+    <strong class="budget-total label {{labelClass}}">
       {{ money remainder }}
     </strong>
   </div>

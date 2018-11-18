@@ -63,7 +63,7 @@ async function view({month, year}) {
         amount,
         totalSpent,
         remainder,
-        isOver
+        labelClass: isOver ? 'label-danger' : remainder === 0 ? 'label-default' : 'label-success'
       }
     })
 
