@@ -2,6 +2,9 @@
   "name": "not-another-budget-app",
   "version": "0.0.0",
   "private": true,
+  "engine": {
+    "node": "9.10.0"
+  },
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
